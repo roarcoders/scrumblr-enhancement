@@ -1,2 +1,2 @@
 # scrumblr-enhancement
-This repository contains the enhancement (persistent storage) for an exisiting web application, Scrumblr
+This repository contains the enhancement (persistent storage) for an existing web application, Scrumblr.
