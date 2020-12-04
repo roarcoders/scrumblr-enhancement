@@ -1,19 +1,11 @@
-let response;
+const express = require('express');
 
-exports.lambdaHandler = async (event, context) => {
-    try {
-        // const ret = await axios(url);
-        response = {
-            'statusCode': 200,
-            'body': JSON.stringify({
-                message: 'hello world',
-                // location: ret.data.trim()
-            })
-        }
-    } catch (err) {
-        console.log(err);
-        return err;
-    }
+const app = express();
+//app.use(bodyParser.json());
 
-    return response
-};
+app.get('/app', (req, res) => {
+    res.send('Hello From Express');
+});
+app.listen(3000);
+  
+module.exports = app;

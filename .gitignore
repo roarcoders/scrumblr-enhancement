@@ -128,5 +128,7 @@ $RECYCLE.BIN/
 events
 tmp
 
+.DS_Store
+
 
 # End of https://www.gitignore.io/api/osx,node,linux,windows

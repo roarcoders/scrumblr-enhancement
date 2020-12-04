@@ -7,7 +7,9 @@
   "author": "SAM CLI",
   "license": "MIT",
   "dependencies": {
-    "axios": "^0.18.0"
+    "aws-serverless-express": "^3.3.8",
+    "axios": "^0.18.0",
+    "express": "^4.17.1"
   },
   "scripts": {
     "test": "mocha tests/unit/"
