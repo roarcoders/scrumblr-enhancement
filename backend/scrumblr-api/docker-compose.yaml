@@ -5,12 +5,15 @@ services:
     image: localstack/localstack
     network_mode: bridge
     ports:
-      - "4566:4566"
+      - '4563-4599:4563-4599'
+      - '8055:8080'
+      # - "4566:4566"
     environment:
-      - SERVICES=dynamodb
+      - SERVICES=dynamodb,s3
       - DEFAULT_REGION=ap-southeast-2
       - LAMBDA_EXECUTOR=local
       - DATA_DIR=/tmp/localstack/data
+      - DEBUG=1
     volumes:
       - "./tmp/localstack:/tmp/localstack"
-      - "./tmp/localstack/run/docker.sock:/var/run/docker.sock"
+      - "./tmp/localstack/run/docker.sock:/var/run/docker.sock" 
