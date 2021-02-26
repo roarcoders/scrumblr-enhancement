@@ -19,6 +19,11 @@
 <script src="socket.io/socket.io.js"></script>
 <!-- ** My Script ** -->
 <script src="script.js"></script>
+<script type="text/javascript">
+  window.onload = localStorage.getItem("boardName");
+  //Append board name to url after page loaded.
+  window.history.replaceState(null, null, localStorage.getItem("boardName"))
+</script>
     <title></title>
   </head>
   <body>
