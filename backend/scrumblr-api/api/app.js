@@ -1,50 +1,60 @@
-const express = require('express');
+const express = require("express");
 const app = express();
-const AWS = require('aws-sdk');
-const { v4: uuidv4 } = require('uuid');
+const AWS = require("aws-sdk");
+const { v4: uuidv4 } = require("uuid");
 
 AWS.config.update({
-    endpoint:'http://docker.for.mac.localhost:4566',
+  endpoint: "http://docker.for.mac.localhost:4566",
 });
 
-const docClient = new AWS.DynamoDB.DocumentClient({ 
-    endpoint:'http://docker.for.mac.localhost:4566' 
+const docClient = new AWS.DynamoDB.DocumentClient({
+  endpoint: "http://docker.for.mac.localhost:4566",
 });
 
-const table = "Board";                         // replace with board name coming from the frontend
+const table = "Boards"; // replace with board name coming from the frontend
 
-app.get("/", async(req, res) => {
-
-    var params = {
-        TableName: table,
-    };
-    
-    const data = await docClient.scan(params).promise();
-    res.send(JSON.stringify(data));
+// Add Access Control Allow Origin headers
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header('Access-Control-Allow-Methods', 'OPTIONS,GET,PUT,POST,DELETE');
+  res.header("Access-Control-Allow-Headers", "X-Requested-With, Content-Type, Accept");
+//   res.header(
+//     "Access-Control-Allow-Headers",
+//     "Origin, X-Requested-With, Content-Type, Accept"
+//   );
+  next();
 });
 
+app.get("/", async (req, res) => {
+  var params = {
+    TableName: table,
+  };
 
-app.post("/", async(req, res) => {
+  const data = await docClient.scan(params).promise();
+  res.send(JSON.stringify(data));
+});
 
-    var params = {
-        TableName: table,
-        Item : {
-            uuid : uuidv4(),
-            datetime: '26/02/2021',              // replace with date and time object
-            board_name: "devcop",                // replace with board name in the url path (coming from the frontend)
-            note1 : "This is my test note 6"     // replace with note(text) coming from the frontend
-        }
-    }
-    await docClient.put(params, function (err, data){
-    if (err) {
-        res.status(201).send('An error occurred -> ' + err);
+app.post("/", async (req, res) => {
+  var params = {
+    TableName: table,
+    Item: {
+      uuid: uuidv4(),
+      datetime: "26/02/2021", // replace with date and time object
+      board_name: "devcop", // replace with board name in the url path (coming from the frontend)
+      note1: "This is my test note 6", // replace with note(text) coming from the frontend
+    },
+  };
+  await docClient
+    .put(params, function (err, data) {
+      if (err) {
+        res.status(201).send("An error occurred -> " + err);
       } else {
-        res.status(201).send('Inserted successfully');
+        res.status(201).send("Inserted successfully");
       }
-    }).promise();
+    })
+    .promise();
 });
-
 
 app.listen(3000);
-  
+
 module.exports = app;

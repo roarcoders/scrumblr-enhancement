@@ -1,83 +1,166 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head><!-- STYLES -->
-<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
-<link rel="stylesheet" type="text/css" href="css/style.css" />
-<link rel="stylesheet" title="cardsize" href="css/bigcards.css" type="text/css" media="all" />
-<!-- FONTS -->
-<link href='//fonts.googleapis.com/css?family=Rock+Salt' rel='stylesheet' type='text/css'>
-<link href='//fonts.googleapis.com/css?family=Covered+By+Your+Grace' rel='stylesheet' type='text/css'>
-<!-- SCRIPTS -->
-<!-- jQuery -->
-<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
-<script src="//code.jquery.com/ui/1.11.1/jquery-ui.js"></script>
-<!-- External Scripts -->
-<script src="lib/jquery.ui.touch-punch.min.js"></script>
-<script src="lib/jquery.jeditable.js"></script>
-<script src="lib/jquery.blockUI.js"></script>
-<!-- Socket.IO -->
-<script src="socket.io/socket.io.js"></script>
-<!-- ** My Script ** -->
-<script src="script.js"></script>
-<script type="text/javascript">
-  window.onload = localStorage.getItem("boardName");
-  //Append board name to url after page loaded.
-  window.history.replaceState(null, null, localStorage.getItem("boardName"))
-</script>
+  <head>
+    <!-- STYLES -->
+    <link
+      href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" type="text/css" href="css/style.css" />
+    <link
+      rel="stylesheet"
+      title="cardsize"
+      href="css/bigcards.css"
+      type="text/css"
+      media="all"
+    />
+    <!-- FONTS -->
+    <link
+      href="//fonts.googleapis.com/css?family=Rock+Salt"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      href="//fonts.googleapis.com/css?family=Covered+By+Your+Grace"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <!-- SCRIPTS -->
+    <!-- jQuery -->
+    <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+    <script src="//code.jquery.com/ui/1.11.1/jquery-ui.js"></script>
+    <!-- External Scripts -->
+    <script src="lib/jquery.ui.touch-punch.min.js"></script>
+    <script src="lib/jquery.jeditable.js"></script>
+    <script src="lib/jquery.blockUI.js"></script>
+    <!-- Socket.IO -->
+    <script src="socket.io/socket.io.js"></script>
+    <!-- ** My Script ** -->
+    <script src="script.js"></script>
+    <script type="text/javascript">
+      window.onload = localStorage.getItem("boardName");
+      //Append board name to url after page loaded.
+      window.history.replaceState(
+        null,
+        null,
+        localStorage.getItem("boardName")
+      );
+
+      boardName = localStorage.getItem("boardName");
+
+      //Post board name to backend.
+      fetch("http://localhost:3000/", {
+        mode: "no-cors",
+        method: "POST",
+        body: boardName
+        // headers: {
+        //   Accept: "application/json",
+        //   "Content-Type": "application/json",
+        // },
+        // body: JSON.stringify({ TableName: localStorage.getItem("boardName")}),
+      })
+        .then(function (response) {
+          return response.text;
+        })
+        .then(function (text) {
+          console.log(text);
+        })
+        .catch(function (error) {
+          console.error(error);
+        });
+    </script>
     <title></title>
   </head>
   <body>
-    <div class="notice-bar">this is a demo board. to make a private board, go to <a href="/demo">/demo</a></div>
-  
-  <!--div.config-->
-  <!--	i.fa.fa-cog.fa-lg.faded-icon-->
-  <h1><a href="http://scrumblr.ca">scrumblr</a> by <a href="http://aliasaria.ca">aliasaria</a></h1>
-  <div class="board-outline">
-    <div id="board">
-      <div id="board-doodles"></div>
-      <image id="marker" src="images/marker.png"></image>
-      <image id="eraser" src="images/eraser.png"></image>
-      <table class="board-table" id="board-table">
-        <tr>
-          <td id="icon-col" width="1%">
-            <image class="col-icon" id="add-col" width="20" height="20" src="images/icons/iconic/raster/black/plus_alt_32x32.png"></image>
-            <image class="col-icon" id="delete-col" width="20" height="20" src="images/icons/iconic/raster/black/minus_alt_32x32.png"></image>
-          </td>
-        </tr>
-      </table>
+    <div class="notice-bar">
+      this is a demo board. to make a private board, go to
+      <a href="/demo">/demo</a>
     </div>
-  </div>
-  <div class="buttons"><i class="fa fa-plus-circle fa-2x bottom-icon" id="create-card"></i><i class="fa fa-expand fa-2x bottom-icon" id="smallify"></i></div>
-  <div class="stickers">
-    <div class="sticker" id="sticker-red"></div>
-    <div class="sticker" id="sticker-blue"></div>
-    <div class="sticker" id="sticker-yellow"></div>
-    <div class="sticker" id="sticker-green"></div><br>
-    <div class="sticker" id="sticker-pink"></div>
-    <div class="sticker" id="sticker-lightblue"></div>
-    <div class="sticker" id="sticker-orange"></div>
-    <div class="sticker" id="sticker-purple"></div>
-    <!--div.sticker#sticker-silverstar-->
-    <!--div#addsticker--><br>
-    <div class="sticker" id="nosticker"></div>
-    <!--br-->
-    <!--div.sticker#sticker-gold-->
-    <!--	image(src="/images/stickers/sticker-gold.png")-->
-    <!--div.sticker#sticker-bluestar-->
-    <!--	image(src="/images/stickers/sticker-bluestar.png")-->
-    <!--div.sticker#sticker-silverstar-->
-    <!--	image(src="/images/stickers/sticker-silverstar.png")-->
-    <!--div.sticker#sticker-redstar-->
-    <!--	image(src="/images/stickers/sticker-redstar.png")-->
-  </div>
-  <div class="names">
-    <p>connected:</p>
-    <!--image#user-icon(src="/images/icons/cc/black/png/user_icon&16.png")-->
-    <input id="yourname-input"><span class="you-text">(you)</span>
-    <ul id="names-ul"></ul>
-  </div>
-  <!--div.trash-->
-  <!--	i.fa.fa-trash-o.fa-lg.faded-icon-->
-  <!--<div style="width: 980px; height: 450px; border: solid 2px; opacity:.1; margin-top: 100px"> this will be the backlog that only appears on drag or perhaps not at all</div>--><script type="text/javascript">	  var _gaq = _gaq || []; _gaq.push(['_setAccount', 'UA-2069672-4']);  _gaq.push(['_trackPageview']);   (function() {    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true; ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);  })(); </script>
-</body>
-  </html>
+
+    <!--div.config-->
+    <!--	i.fa.fa-cog.fa-lg.faded-icon-->
+    <h1>
+      <a href="http://scrumblr.ca">scrumblr</a> by
+      <a href="http://aliasaria.ca">aliasaria</a>
+    </h1>
+    <div class="board-outline">
+      <div id="board">
+        <div id="board-doodles"></div>
+        <image id="marker" src="images/marker.png"></image>
+        <image id="eraser" src="images/eraser.png"></image>
+        <table class="board-table" id="board-table">
+          <tr>
+            <td id="icon-col" width="1%">
+              <image
+                class="col-icon"
+                id="add-col"
+                width="20"
+                height="20"
+                src="images/icons/iconic/raster/black/plus_alt_32x32.png"
+              ></image>
+              <image
+                class="col-icon"
+                id="delete-col"
+                width="20"
+                height="20"
+                src="images/icons/iconic/raster/black/minus_alt_32x32.png"
+              ></image>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+    <div class="buttons">
+      <i class="fa fa-plus-circle fa-2x bottom-icon" id="create-card"></i
+      ><i class="fa fa-expand fa-2x bottom-icon" id="smallify"></i>
+    </div>
+    <div class="stickers">
+      <div class="sticker" id="sticker-red"></div>
+      <div class="sticker" id="sticker-blue"></div>
+      <div class="sticker" id="sticker-yellow"></div>
+      <div class="sticker" id="sticker-green"></div>
+      <br />
+      <div class="sticker" id="sticker-pink"></div>
+      <div class="sticker" id="sticker-lightblue"></div>
+      <div class="sticker" id="sticker-orange"></div>
+      <div class="sticker" id="sticker-purple"></div>
+      <!--div.sticker#sticker-silverstar-->
+      <!--div#addsticker--><br />
+      <div class="sticker" id="nosticker"></div>
+      <!--br-->
+      <!--div.sticker#sticker-gold-->
+      <!--	image(src="/images/stickers/sticker-gold.png")-->
+      <!--div.sticker#sticker-bluestar-->
+      <!--	image(src="/images/stickers/sticker-bluestar.png")-->
+      <!--div.sticker#sticker-silverstar-->
+      <!--	image(src="/images/stickers/sticker-silverstar.png")-->
+      <!--div.sticker#sticker-redstar-->
+      <!--	image(src="/images/stickers/sticker-redstar.png")-->
+    </div>
+    <div class="names">
+      <p>connected:</p>
+      <!--image#user-icon(src="/images/icons/cc/black/png/user_icon&16.png")-->
+      <input id="yourname-input" /><span class="you-text">(you)</span>
+      <ul id="names-ul"></ul>
+    </div>
+    <!--div.trash-->
+    <!--	i.fa.fa-trash-o.fa-lg.faded-icon-->
+    <!--<div style="width: 980px; height: 450px; border: solid 2px; opacity:.1; margin-top: 100px"> this will be the backlog that only appears on drag or perhaps not at all</div>-->
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(["_setAccount", "UA-2069672-4"]);
+      _gaq.push(["_trackPageview"]);
+      (function () {
+        var ga = document.createElement("script");
+        ga.type = "text/javascript";
+        ga.async = true;
+        ga.src =
+          ("https:" == document.location.protocol
+            ? "https://ssl"
+            : "http://www") + ".google-analytics.com/ga.js";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+  </body>
+</html>
