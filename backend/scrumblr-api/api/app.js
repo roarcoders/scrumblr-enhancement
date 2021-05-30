@@ -9,7 +9,7 @@ const { uuid } = require('uuidv4')
 router.use(bodyParser.json())
 router.use(bodyParser.urlencoded({extended: true}))
 
-let devcop = []
+let DevCop = []
 
 //Create a board with 3 sample notes
 router.get("/", function(req, res){
@@ -35,7 +35,7 @@ router.get("/", function(req, res){
     }
     devcop.push(board);
     res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify(devcop));
+    res.end(JSON.stringify(DevCop));
 })
 
 //List all boards in the memory
