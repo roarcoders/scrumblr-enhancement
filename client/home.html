@@ -2,16 +2,7 @@
 <html lang="en">
   <head>
     <!-- SCRIPTS -->
-    <script type="text/javascript">
-      function go() {
-        var value = document.forms[0].elements["name"].value;
-        value = escape(value);
-        //Load index.html after name entered and go button clicked.
-        window.location.href = "index.html";
-        localStorage.setItem("boardName", value);
-        return false;
-      }
-    </script>
+    <script src="middleware.js"></script>
     <link rel="stylesheet" type="text/css" href="css/style.css" />
     <!-- FONTS -->
     <link
@@ -36,13 +27,12 @@
         <tr>
           <td>
             <h1 class="home">scrumblr.</h1>
-            <form class="home" onsubmit="return go();">
+            <form class="home" onsubmit="postBoardName()">
               <label>name your new board:</label><br />
               <input class="text" type="text" name="name" /><a
                 id="go"
-                onclick="return go();"
-                >&nbsp;go.</a
-              >
+                onclick="postBoardName()"
+                >&nbsp;go.</a>
             </form>
             <br /><br />
             <p class="home">example board:</p>
