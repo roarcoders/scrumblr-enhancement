@@ -14,17 +14,19 @@ function go() {
 }
 
 function postBoardName(){
-    console.log("postBoardName");
+    alert("postBoardName");
     // let _data = {
     //     boardId:"123",
     //     //body:localStorage.getItem("boardName")
     // }
-
-    // fetch('https://sv87lzli5d.execute-api.ap-southeast-2.amazonaws.com/prod/board', {
-    //     method: 'POST',
-    //     //body: JSON.stringify(_data),
-    //     headers: {'Content-type': 'application/json; charset=UTF-8'}
-    // })
-    // .then(response => console.log(response.json()))
-    // .catch(err => console.log(err));
+let url = 'https://sv87lzli5d.execute-api.ap-southeast-2.amazonaws.com/prod/board'
+    fetch(url, {
+        method: 'POST',
+        //body: JSON.stringify(_data),
+        headers: {'Content-type': 'application/json; charset=UTF-8',
+        'Access-Control-Allow-Origin' : '*'
+    }
+    })
+    .then(response => console.log(response.json()))
+    .catch(err => console.log(err));
 }
