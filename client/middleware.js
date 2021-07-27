@@ -19,14 +19,17 @@ function postBoardName(){
     //     boardId:"123",
     //     //body:localStorage.getItem("boardName")
     // }
+   var header = new Header();
+   header.append('Content-type','application/json; charset=UTF-8');
+   header.append('Access-Control-Allow-Origin' , '*');
 let url = 'https://sv87lzli5d.execute-api.ap-southeast-2.amazonaws.com/prod/board'
     fetch(url, {
         method: 'POST',
         //body: JSON.stringify(_data),
-        headers: {'Content-type': 'application/json; charset=UTF-8',
-        'Access-Control-Allow-Origin' : '*'
+        headers: header,
+        mode: 'cors',
     }
-    })
+    )
     .then(response => console.log(response.json()))
     .catch(err => console.log(err));
 }
