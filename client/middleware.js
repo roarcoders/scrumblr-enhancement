@@ -2,6 +2,7 @@ window.onload = localStorage.getItem("boardName");
 
 //Append board name to url after page loaded.
 window.history.replaceState(null, null, localStorage.getItem("boardName"))
+let url = 'https://we7btpj0ue.execute-api.ap-southeast-2.amazonaws.com/prod/board'
 
 function go() {
     console.log("go")
@@ -19,17 +20,30 @@ function postBoardName(){
     //     boardId:"123",
     //     //body:localStorage.getItem("boardName")
     // }
-   var header = new Header();
-   header.append('Content-type','application/json; charset=UTF-8');
-   header.append('Access-Control-Allow-Origin' , '*');
-let url = 'https://sv87lzli5d.execute-api.ap-southeast-2.amazonaws.com/prod/board'
+//    var header = new Header();
+//    header.append('Content-type','application/json; charset=UTF-8');
+//    header.append('Access-Control-Allow-Origin' , '*');
+
+ 
     fetch(url, {
         method: 'POST',
         //body: JSON.stringify(_data),
-        headers: header,
-        mode: 'cors',
+        headers: {
+            'Content-type':'application/json',
+        'Access-Control-Allow-Origin' : '*'
+                },
+                mode: 'cors' 
     }
     )
-    .then(response => console.log(response.json()))
+    .then(response => {response.text()})
     .catch(err => console.log(err));
+   
+}
+
+function getBoards() {
+
+
+    fetch(url)
+        .then(response => response.text())
+        .then(json => {console.log(JSON.stringify(json))})
 }

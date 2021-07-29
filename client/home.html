@@ -27,11 +27,11 @@
         <tr>
           <td>
             <h1 class="home">scrumblr.</h1>
-            <form class="home" onsubmit="postBoardName()">
+            <form class="home" onsubmit="go();">
               <label>name your new board:</label><br />
               <input class="text" type="text" name="name" /><a
                 id="go"
-                onclick="postBoardName();"
+                onclick="postBoardName();go();getBoards();"
                 >&nbsp;go.</a>
             </form>
             <br /><br />
