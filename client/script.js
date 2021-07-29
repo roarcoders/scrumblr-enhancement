@@ -6,7 +6,7 @@ var boardInitialized = false;
 var keyTrap = null;
 
 var baseurl = location.pathname.substring(0, location.pathname.lastIndexOf('/'));
-var socket = io.connect({path: baseurl + "/socket.io"});
+// var socket = io.connect({path: baseurl + "/socket.io"});
 
 //an action has happened, send it to the
 //server
@@ -18,53 +18,53 @@ function sendAction(a, d) {
         data: d
     };
 
-    socket.json.send(message);
+    // socket.json.send(message);
 }
 
-socket.on('connect', function() {
-    //console.log('successful socket.io connect');
+// socket.on('connect', function() {
+//     //console.log('successful socket.io connect');
 
-    //let the final part of the path be the room name
-    var room = location.pathname.substring(location.pathname.lastIndexOf('/'));
+//     //let the final part of the path be the room name
+//     var room = location.pathname.substring(location.pathname.lastIndexOf('/'));
 
-    //imediately join the room which will trigger the initializations
-    sendAction('joinRoom', room);
-});
+//     //imediately join the room which will trigger the initializations
+//     sendAction('joinRoom', room);
+// });
 
-socket.on('disconnect', function() {
-    blockUI("Server disconnected. Refresh page to try and reconnect...");
-    //$('.blockOverlay').click($.unblockUI);
-});
+// socket.on('disconnect', function() {
+//     blockUI("Server disconnected. Refresh page to try and reconnect...");
+//     //$('.blockOverlay').click($.unblockUI);
+// });
 
-socket.on('message', function(data) {
-    getMessage(data);
-});
+// socket.on('message', function(data) {
+//     getMessage(data);
+// });
 
-function unblockUI() {
-    $.unblockUI({fadeOut: 50});
-}
+// function unblockUI() {
+//     $.unblockUI({fadeOut: 50});
+// }
 
-function blockUI(message) {
-    message = message || 'Waiting...';
+// function blockUI(message) {
+//     message = message || 'Waiting...';
 
-    $.blockUI({
-        message: message,
+//     $.blockUI({
+//         message: message,
 
-        css: {
-            border: 'none',
-            padding: '15px',
-            backgroundColor: '#000',
-            '-webkit-border-radius': '10px',
-            '-moz-border-radius': '10px',
-            opacity: 0.5,
-            color: '#fff',
-            fontSize: '20px'
-        },
+//         css: {
+//             border: 'none',
+//             padding: '15px',
+//             backgroundColor: '#000',
+//             '-webkit-border-radius': '10px',
+//             '-moz-border-radius': '10px',
+//             opacity: 0.5,
+//             color: '#fff',
+//             fontSize: '20px'
+//         },
 
-        fadeOut: 0,
-        fadeIn: 10
-    });
-}
+//         fadeOut: 0,
+//         fadeIn: 10
+//     });
+// }
 
 //respond to an action event
 function getMessage(m) {
@@ -347,6 +347,7 @@ function addSticker(cardId, stickerId) {
 // cards
 //----------------------------------
 function createCard(id, text, x, y, rot, colour) {
+    console.log("clicked plus");
     drawNewCard(id, text, x, y, rot, colour, null);
 
     var action = "createCard";
@@ -686,8 +687,8 @@ $(function() {
 	//window.ondragstart = function() { return false; };
 
 
-    if (boardInitialized === false)
-        blockUI('<img src="images/ajax-loader.gif" width=43 height=11/>');
+    // if (boardInitialized === false)
+    //     blockUI('<img src="images/ajax-loader.gif" width=43 height=11/>');
 
     //setTimeout($.unblockUI, 2000);
 
