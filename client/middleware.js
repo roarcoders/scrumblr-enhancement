@@ -46,4 +46,5 @@ function getBoards() {
     fetch(url)
         .then(response => response.text())
         .then(json => {console.log(JSON.stringify(json))})
+        
 }
