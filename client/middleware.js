@@ -13,14 +13,16 @@ function go() {
     localStorage.setItem("boardName", value);
     return false;
 }
-let board = "A board"
+
 
 function postBoardName(){
-     let _data = {
+    let board = "A board"
+    
+    //  let _data = {
         
-         body:board
-    //     //window.location.pathname
-    }
+    //      body:board
+    // //     //window.location.pathname
+    // }
 //    var header = new Header();
 //    header.append('Content-type','application/json; charset=UTF-8');
 //    header.append('Access-Control-Allow-Origin' , '*');
@@ -46,8 +48,8 @@ alert(typeof(board));
 function getBoards() {
 
 
-    fetch(url)
-        .then(response => response.text())
-        .then(json => {console.log(JSON.stringify(json))})
+    // fetch(url)
+    //     .then(response => response.text())
+    //     .then(json => {console.log(JSON.stringify(json))})
 
 }
