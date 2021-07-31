@@ -13,13 +13,15 @@ function go() {
     localStorage.setItem("boardName", value);
     return false;
 }
-
+let board = {
+    'BoardName' : "A board"
+}
 function postBoardName(){
-    alert("postBoardName");
-    // let _data = {
-    //     boardId:"123",
-    //     //body:localStorage.getItem("boardName")
-    // }
+     let _data = {
+        
+         body:board
+    //     //window.location.pathname
+    }
 //    var header = new Header();
 //    header.append('Content-type','application/json; charset=UTF-8');
 //    header.append('Access-Control-Allow-Origin' , '*');
@@ -27,12 +29,12 @@ function postBoardName(){
  
     fetch(url, {
         method: 'POST',
-        //body: JSON.stringify(_data),
+       body: JSON.stringify(board),
         headers: {
             'Content-type':'application/json',
         'Access-Control-Allow-Origin' : '*'
                 },
-                mode: 'cors' 
+                mode: 'no-cors' 
     }
     )
     .then(response => {response.text()})
@@ -46,5 +48,5 @@ function getBoards() {
     fetch(url)
         .then(response => response.text())
         .then(json => {console.log(JSON.stringify(json))})
-        
+
 }
