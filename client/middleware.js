@@ -13,9 +13,8 @@ function go() {
     localStorage.setItem("boardName", value);
     return false;
 }
-let board = {
-    'BoardName' : "A board"
-}
+let board = "A board"
+
 function postBoardName(){
      let _data = {
         
@@ -26,10 +25,11 @@ function postBoardName(){
 //    header.append('Content-type','application/json; charset=UTF-8');
 //    header.append('Access-Control-Allow-Origin' , '*');
 
+alert(typeof(board));
  
     fetch(url, {
         method: 'POST',
-       body: JSON.stringify(board),
+       body: board,
         headers: {
             'Content-type':'application/json',
         'Access-Control-Allow-Origin' : '*'
@@ -37,6 +37,7 @@ function postBoardName(){
                 mode: 'no-cors' 
     }
     )
+   
     .then(response => {response.text()})
     .catch(err => console.log(err));
    
