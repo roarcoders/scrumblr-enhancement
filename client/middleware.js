@@ -16,8 +16,11 @@ function go() {
 
 
 function postBoardName(){
-    let board = "A board"
-    
+    let board_name = document.forms[0].elements["name"].value;
+    let board = {
+        'BoardName' : board_name
+    }
+
     //  let _data = {
         
     //      body:board
@@ -28,10 +31,13 @@ function postBoardName(){
 //    header.append('Access-Control-Allow-Origin' , '*');
 
 alert(typeof(board));
+alert(board.BoardName);
  
     fetch(url, {
         method: 'POST',
-       body: board,
+       body: {
+           'BoardName' : board_name
+       },
         headers: {
             'Content-type':'application/json',
         'Access-Control-Allow-Origin' : '*'
@@ -40,7 +46,7 @@ alert(typeof(board));
     }
     )
    
-    .then(response => {response.text()})
+    .then(response => {response.json()})
     .catch(err => console.log(err));
    
 }
