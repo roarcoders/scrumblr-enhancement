@@ -46,7 +46,16 @@ alert(board.BoardName);
     }
     )
    
-    .then(response => {response.json()})
+    // _parseJSON: function(response) { 
+    //     return response.text()
+    //     .then(function(text) 
+    //     { return text ? JSON.parse(text) : {} }) }
+
+
+    .then(response => { 
+        return response.text() 
+        .then(function(text) 
+        { return text ? JSON.parse(text) : {} }) } )
     .catch(err => console.log(err));
    
 }
