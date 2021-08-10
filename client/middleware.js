@@ -1,5 +1,5 @@
 let url =
-  "https://we7btpj0ue.execute-api.ap-southeast-2.amazonaws.com/prod/board";
+  "https://54bg3f6pc9.execute-api.ap-southeast-2.amazonaws.com/prod/board";
 
 function go() {
   var value = document.forms[0].elements["name"].value;
@@ -55,7 +55,8 @@ async function postBoardName(boardName) {
     //     { return text ? JSON.parse(text) : {} }) }
 
     .then((response) => {
-      window.location.href = "index.html";
+      response.status;
+     // window.location.href = "index.html";
 
       return response.text().then(function (text) {
         return text ? JSON.parse(text) : {};
@@ -71,3 +72,5 @@ function getBoards() {
       console.log(JSON.stringify(json));
     });
 }
+
+
