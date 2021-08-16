@@ -14,10 +14,10 @@ function go() {
   //console.log(getBoardByName(value));
 
   //Load index.html after name entered and go button clicked.
-  //window.location.href = "index.html";
+  window.location.href = "index.html";
 
   //Append board name to url.sl
-  //window.history.replaceState(null, null, value);
+  window.history.replaceState(null, null, value);
 
   return false;
 }
@@ -39,7 +39,7 @@ async function postBoardName(boardName) {
 
     .then((response) => {
       response.status;
-      //window.location.href = "index.html";
+      window.location.href = "index.html";
 
       return response.text().then(function (text) {
         return text ? JSON.parse(text) : {};
