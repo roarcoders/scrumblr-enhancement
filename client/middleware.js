@@ -1,42 +1,33 @@
 let url =
-  "https://we7btpj0ue.execute-api.ap-southeast-2.amazonaws.com/prod/board";
+  "https://54bg3f6pc9.execute-api.ap-southeast-2.amazonaws.com/prod/board";
 
 function go() {
+  
   var value = document.forms[0].elements["name"].value;
   value = escape(value);
 
   localStorage.setItem("boardName", value);
 
+  let responseCode = postBoardName(value);
+  //Delaying code run for 500ms so that postBoardName is able to penetrate the request
+  sleep(500);
+  
   //Post board name to backend.
-  postBoardName(value);
-
-  //Load index.html after name entered and go button clicked.
-  // window.location.href = "index.html";
-
-  //Append board name to url.sl
-  // window.history.replaceState(null, null, value);
+  if(responseCode = 200 )
+  {
+    window.location.href = "index.html";
+    
+    //Append board name to url.sl
+    window.history.replaceState(null, null, value);
+  }
+  //Uncomment or comment when testing
+  //console.log(getBoardByName(value));
 
   return false;
 }
 
 async function postBoardName(boardName) {
-  // let board_name = document.forms[0].elements["name"].value;
-
-  // let board = {
-  //   BoardName: board_name,
-  // };
-
-  //  let _data = {
-
-  //      body:board
-  // //     //window.location.pathname
-  // }
-  //    var header = new Header();
-  //    header.append('Content-type','application/json; charset=UTF-8');
-  //    header.append('Access-Control-Allow-Origin' , '*');
-
-  //   alert(typeof board);
-  //   alert(board.BoardName);
+ 
 
   await fetch(url, {
     method: "POST",
@@ -49,19 +40,18 @@ async function postBoardName(boardName) {
       BoardName: boardName,
     }),
   })
-    // _parseJSON: function(response) {
-    //     return response.text()
-    //     .then(function(text)
-    //     { return text ? JSON.parse(text) : {} }) }
 
     .then((response) => {
-      window.location.href = "index.html";
+      response.status;
+      //window.location.href = "index.html";
 
       return response.text().then(function (text) {
         return text ? JSON.parse(text) : {};
       });
     })
     .catch((err) => console.log(err));
+
+    return response.status;
 }
 
 function getBoards() {
@@ -70,4 +60,31 @@ function getBoards() {
     .then((json) => {
       console.log(JSON.stringify(json));
     });
+  }
+
+  function getBoardByName(value)
+  {
+    alert("this was called");
+    
+    var currentBoard=fetch(url+"/"+value,{
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+      },
+    
+  })
+    
+    .then((response) => response.text())
+    .then((json) => {
+      console.log(JSON.stringify(json));
+    });
+    return currentBoard;
+
+  }
+  function sleep(delay) {
+    var start = new Date().getTime();
+    while (new Date().getTime() < start + delay);
 }
+
+
