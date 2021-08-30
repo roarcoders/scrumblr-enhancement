@@ -1,5 +1,5 @@
 let url =
-  "https://54bg3f6pc9.execute-api.ap-southeast-2.amazonaws.com/prod/board";
+  "https://boy22uup5e.execute-api.ap-southeast-2.amazonaws.com/prod/board";
 
 function go() {
   
@@ -13,12 +13,12 @@ function go() {
   sleep(500);
   
   //Post board name to backend.
-  if(responseCode = 200 )
+  if(responseCode === 200 )
   {
-    window.location.href = "index.html";
+    //window.location.href = "index.html";
     
     //Append board name to url.sl
-    window.history.replaceState(null, null, value);
+    //window.history.replaceState(null, null, value);
   }
   //Uncomment or comment when testing
   //console.log(getBoardByName(value));
@@ -28,13 +28,10 @@ function go() {
 
 async function postBoardName(boardName) {
  
-
-  await fetch(url, {
+  let result = await fetch(url, {
     method: "POST",
-    mode: "cors",
     headers: {
-      "Content-Type": "application/json",
-      "Access-Control-Allow-Origin": "*",
+      "Content-Type": "application/json"
     },
     body: JSON.stringify({
       BoardName: boardName,
@@ -42,16 +39,16 @@ async function postBoardName(boardName) {
   })
 
     .then((response) => {
-      response.status;
       //window.location.href = "index.html";
 
       return response.text().then(function (text) {
         return text ? JSON.parse(text) : {};
+        
       });
     })
     .catch((err) => console.log(err));
 
-    return response.status;
+    return result;
 }
 
 function getBoards() {
