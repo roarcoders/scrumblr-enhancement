@@ -1,6 +1,7 @@
 let url =
-  "https://54bg3f6pc9.execute-api.ap-southeast-2.amazonaws.com/prod/board";
+  "https://kyp91ncs12.execute-api.ap-southeast-2.amazonaws.com/prod/board";
 
+let middlware_boardid = "";
 function go() {
   
   var value = document.forms[0].elements["name"].value;
@@ -8,28 +9,31 @@ function go() {
 
   localStorage.setItem("boardName", value);
 
-  let responseCode = postBoardName(value);
+  //let responseCode = 
+  postBoardName(value);
+  //getBoards();
   //Delaying code run for 500ms so that postBoardName is able to penetrate the request
-  sleep(500);
+  // sleep(500);
   
   //Post board name to backend.
-  if(responseCode = 200 )
-  {
-    window.location.href = "index.html";
+  // if(responseCode === 200)
+  // {
+  //   // window.location.href = "index.html";
     
-    //Append board name to url.sl
-    window.history.replaceState(null, null, value);
-  }
+  //   // //Append board name to url.sl
+  //  //  window.history.replaceState(null, null, value);
+  // }
   //Uncomment or comment when testing
-  //console.log(getBoardByName(value));
+  // console.log(getBoardByName(value));
 
   return false;
 }
 
 async function postBoardName(boardName) {
- 
+  let response_status;
 
-  await fetch(url, {
+   const response_value =
+   await fetch(url, {
     method: "POST",
     mode: "cors",
     headers: {
@@ -42,16 +46,19 @@ async function postBoardName(boardName) {
   })
 
     .then((response) => {
-      response.status;
       //window.location.href = "index.html";
-
+      // middlware_boardid=JSON.stringify(response.JSON());
+      response.status;
       return response.text().then(function (text) {
-        return text ? JSON.parse(text) : {};
+        return text ? JSON.parse(text) : {
+          
+        };
       });
     })
     .catch((err) => console.log(err));
-
-    return response.status;
+  var middlware_boardid = response_value;
+    console.log(middlware_boardid);
+    //return response.status;
 }
 
 function getBoards() {
