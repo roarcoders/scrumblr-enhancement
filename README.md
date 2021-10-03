@@ -2,7 +2,7 @@
 
 # scrumblr-enhancement
 
-This repository is the frontend microservice for an on-going project, enhancement of an existing web application called [Scrumblr](http://scrumblr.ca/). The backend microservice is [scrumbler-sam -api](https://github.com/zainafzal88/scrumblr-sam-api/tree/stable-backend)
+This repository is the frontend microservice for an on-going project, enhancement of an existing web application called [Scrumblr](http://scrumblr.ca/). The backend microservice is [scrumblr-sam -api](https://github.com/zainafzal88/scrumblr-sam-api/tree/stable-backend)
 
 
 ## Overall Project Idea
