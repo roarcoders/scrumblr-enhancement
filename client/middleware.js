@@ -1,10 +1,14 @@
-let url =
-"https://boy22uup5e.execute-api.ap-southeast-2.amazonaws.com/prod/board/"
+import Environment from 'environment.js';
+var test = new Environment();
+
+let url = test.getUrl();
+console.log (url)
 let middlware_boardid = "";
+
 function go() {
 
   alert(process.env.BASE_URL);
-  
+   
   var value = document.forms[0].elements["name"].value;
   value = escape(value);
 
