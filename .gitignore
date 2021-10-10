@@ -129,6 +129,7 @@ events
 tmp
 
 .DS_Store
+environment.js
 
 
 # End of https://www.gitignore.io/api/osx,node,linux,windows

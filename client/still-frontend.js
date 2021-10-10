@@ -1,21 +1,17 @@
-let url =
-"https://boy22uup5e.execute-api.ap-southeast-2.amazonaws.com/prod/board/"
 let middlware_boardid = "";
+const url;
+
 function go() {
-  
+  url = ENV.URL;
   var value = document.forms[0].elements["name"].value;
   value = escape(value);
-
+ 
   localStorage.setItem("boardName", value);
-  patchBoardName("74171dcb-ee89-496a-828a-1b1c7302f628", "I am a small board")
+  //patchBoardName("74171dcb-ee89-496a-828a-1b1c7302f628", "I am a small board")
 // deleteBoard("09e49698-05b6-4457-8271-2a288af9f6f5")
 // getBoardById("6f28a5d4-b14c-455b-9245-60d9e561d84e");
 // getBoards();
-// let responseCode = postBoardName(value);
-
-
-
-
+let responseCode = postBoardName(value);
 
 // postNote("I am a note", "6f28a5d4-b14c-455b-9245-60d9e561d84e");
 // getNote("6f28a5d4-b14c-455b-9245-60d9e561d84e","5f216c4d-4aef-42c1-8fc3-0a1c4e076650")
