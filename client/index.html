@@ -37,7 +37,7 @@
     <!-- <script src="socket.io/socket.io.js"></script> -->
     <!-- ** My Script ** -->
     <script src="script.js"></script>
-    <script src="middleware.js"></script>
+    <script src="still-frontend.js"></script>
     <script type="text/javascript">
       //Retrieve and append board name on load.
       window.onload = localStorage.getItem("boardName");
@@ -59,8 +59,9 @@
     <!--div.config-->
     <!--	i.fa.fa-cog.fa-lg.faded-icon-->
     <h1>
-      <a href="http://scrumblr.ca">scrumblr</a> by
-      <a href="http://aliasaria.ca">aliasaria</a>
+      <script type="text/javascript">
+      getBoardById(middleware_boardid).boardName;
+      </script>
     </h1>
     <div class="board-outline">
       <div id="board">
