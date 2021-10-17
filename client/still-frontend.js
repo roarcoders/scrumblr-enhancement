@@ -1,26 +1,17 @@
-import Environment from 'environment.js';
-var test = new Environment();
-
-let url = test.getUrl();
-console.log (url)
 let middlware_boardid = "";
+let url;
 
 function go() {
-
-  alert(process.env.BASE_URL);
-   
+  url = ENV.URL;
   var value = document.forms[0].elements["name"].value;
   value = escape(value);
-
-  // localStorage.setItem("boardName", value);
-  // patchBoardName("74171dcb-ee89-496a-828a-1b1c7302f628", "I am a small board")
+ 
+  localStorage.setItem("boardName", value);
+  //patchBoardName("74171dcb-ee89-496a-828a-1b1c7302f628", "I am a small board")
 // deleteBoard("09e49698-05b6-4457-8271-2a288af9f6f5")
-// getBoardById("6f28a5d4-b14c-455b-9245-60d9e561d84e");
-// getBoards();
-// let responseCode = postBoardName(value);
-
-
-
+  getBoardById("6f28a5d4-b14c-455b-9245-60d9e561d84e");
+//getBoards();
+  //let responseCode = postBoardName(value);
 
 // postNote("I am a note", "6f28a5d4-b14c-455b-9245-60d9e561d84e");
 // getNote("6f28a5d4-b14c-455b-9245-60d9e561d84e","5f216c4d-4aef-42c1-8fc3-0a1c4e076650")
@@ -32,13 +23,12 @@ function go() {
   sleep(500);
   
   // Post board name to backend.
-  // if(responseCode === 200)
-  //  {
-  //       window.location.href = "index.html";
-    
-  //       //Append board name to url.sl
-  //      window.history.replaceState(null, null, value);
-  // }
+  if(responseCode === 200){
+      window.location.href = "index.html";
+  
+      //Append board name to url.sl
+      window.history.replaceState(null, null, value);
+  }
   //Uncomment or comment when testing
   // console.log(getBoardByName(value));
 
@@ -61,20 +51,17 @@ async function postBoardName(boardName) {
   })
 
     .then((response) => {
-      //window.location.href = "index.html";
+      window.location.href = "index.html";
       // middlware_boardid=JSON.stringify(response.JSON());
-      response_status=response.status;
+      response_status = response.status;
       return response.text().then(function (text) {
        
-        return text ? JSON.parse(text) : {
-          
-          
-        };
+        return text ? JSON.parse(text) : {};
       });
     })
 
     .catch((err) => console.log(err));
-    console.log(response_value);
+    middlware_boardid = response_value;
  
     return response_status;
 }
@@ -115,7 +102,7 @@ function getBoards() {
 async function postNote(value,boardIdtopost)
 {
   let noteName = value;
- await fetch(url+boardIdtopost+"/note/", {
+ await fetch(url + boardIdtopost + "/note/", {
     method: "POST",
     mode: "cors",
     headers: {
@@ -152,7 +139,8 @@ async function getBoardById(boardIdtoGet)
   })
 
   .then((response) => {
-    //window.location.href = "index.html";
+    // window.location.href = "index.html";
+
     // middlware_boardid=JSON.stringify(response.JSON());
 
     return response.text().then(function (text) {
