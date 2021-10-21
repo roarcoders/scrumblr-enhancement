@@ -58,10 +58,7 @@
 
     <!--div.config-->
     <!--	i.fa.fa-cog.fa-lg.faded-icon-->
-    <h1>
-      <script type="text/javascript">
-      getBoardById(middleware_boardid).boardName;
-      </script>
+    <h1 id="board-name">
     </h1>
     <div class="board-outline">
       <div id="board">
@@ -91,6 +88,8 @@
       </div>
     </div>
     <div class="buttons">
+      <input type='text' id="board-id" value="put a board-id here"/>
+      <button onclick="getButtonClick()">Get</button>
       <i class="fa fa-plus-circle fa-2x bottom-icon" id="create-card"></i
       ><i class="fa fa-expand fa-2x bottom-icon" id="smallify"></i>
     </div>

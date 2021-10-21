@@ -152,6 +152,18 @@ async function getBoardById(boardIdtoGet)
     });
   })
   console.log(board);
+  return board;
+}
+
+async function getButtonClick() {
+  const boardId = document.getElementById("board-id").value;
+  const board = await getBoardById(`${boardId}`);
+
+  const boardHeading = document.getElementById("board-name");
+  boardHeading.innerText = board.BoardName;
+
+  const boardTable = document.getElementById("board-table");
+  boardTable.innerHTML = board.board_notes;
 }
 
 async function getNote(boardId,noteId)
