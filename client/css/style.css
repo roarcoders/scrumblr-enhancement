@@ -241,13 +241,13 @@ width: 16px; height: 16px;
 }
 
 h1, h1 a {
-	color: #727272;
+	color: #000 !important;
 	padding: 0px;
 	margin: 0px;
 	margin-left: 1px;
 	font-weight: normal;
 	xtext-shadow: 1px 1px 1px #b6b6b6;
-	font-size: 26px;
+	font-size: 30px;
 	padding-top: 14px;
 	/*letter-spacing: +1px;*/
 	font-family:  "Helvetica Neue Light", "HelveticaNeue-Light", 'Helvetica Neue', arial, serif;

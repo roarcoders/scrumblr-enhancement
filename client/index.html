@@ -44,18 +44,8 @@
     <!--<script src="socketio/socket.io.js"></script>-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.1/socket.io.min.js"></script>
     <!-- ** My Script ** -->
-    <script src="script.js"></script>
+    <script src="environment.js"></script>
     <script src="still-frontend.js"></script>
-    <script type="text/javascript">
-      //Retrieve and append board name on load.
-      window.onload = localStorage.getItem("boardName");
-      //Replace file name with board name.
-      window.history.replaceState(
-        null,
-        null,
-        localStorage.getItem("boardName")
-      );
-    </script>
     <title></title>
   </head>
   <body>
@@ -74,7 +64,7 @@
           align-items: baseline;
         "
       >
-        <h1 class="ceditable" id="board-title">Board Title</h1>
+        <h1 class="ceditable" id="board-title"></h1>
 </div>
       <div class="board-outline" style="clear: both">
         <div id="board">
@@ -148,4 +138,17 @@
       })();
     </script>
   </body>
+  <script type="text/javascript">
+    
+    //Retrieve and append board name on load.
+    window.onload = localStorage.getItem("boardName");
+    //Replace file name with board name.
+    window.history.replaceState(
+      null,
+      null,
+      localStorage.getItem("boardName")
+    );
+    document.getElementById("board-title").innerHTML = localStorage.getItem("boardName");
+    
+  </script>
 </html>
