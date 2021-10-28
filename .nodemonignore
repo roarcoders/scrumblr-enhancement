@@ -1,0 +1,4 @@
+/client/*
+.DS_Store
+/.git/*
+*.rdb

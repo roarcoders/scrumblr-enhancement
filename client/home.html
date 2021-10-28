@@ -1,24 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <!-- SCRIPTS -->
-    <script src="environment.js"></script>
-    <script src="still-frontend.js"></script>
-    <link rel="stylesheet" type="text/css" href="css/style.css" />
-    <!-- FONTS -->
-    <link
-      href="http://fonts.googleapis.com/css?family=Rock+Salt"
-      rel="stylesheet"
-      type="text/css"
-    />
-    <link
-      href="http://fonts.googleapis.com/css?family=Covered+By+Your+Grace"
-      rel="stylesheet"
-      type="text/css"
-    />
-    <title>scrumblr</title>
-  </head>
+
+<head>
+  <!-- SCRIPTS -->
+  <script type="text/javascript">
+    function go() {
+      var value = document.forms[0].elements["name"].value;
+      value = escape(value);       // value is the name of the room
+      window.location.href = value; 
+      // window.location.href = 'index.html'; 
+      return false;
+      // window.open('https://scrumbler-frontend.s3-ap-southeast-2.amazonaws.com/index.html')
+    }
+  </script>
+  <link rel="stylesheet" type="text/css" href="css/style.css" />
+  <!-- FONTS -->
+  <link href='http://fonts.googleapis.com/css?family=Rock+Salt' rel='stylesheet' type='text/css'>
+  <link href='http://fonts.googleapis.com/css?family=Covered+By+Your+Grace' rel='stylesheet' type='text/css'>
+  <title>scrumblr</title>
+</head>
+
 </html>
+
 <body>
   <h1>scrumblr by <a href="http://aliasaria.ca">aliasaria</a></h1>
   <div class="board-outline">
@@ -28,24 +31,13 @@
         <tr>
           <td>
             <h1 class="home">scrumblr.</h1>
-            <form class="home" onsubmit="go();">
-              <label>name your new board:</label><br />
-              <input class="text" type="text" name="name" /><a
-                id="go"
-                onclick="go();"
-                >&nbsp;go.</a
-              >
-            </form>
-            <br /><br />
+            <form class="home" onsubmit="return go();">
+              <label>name your new board:</label><br>
+              <input class="text" type="text" name="name"><a id="go" onclick="return go();">&nbsp;go.</a>
+            </form><br><br>
             <p class="home">example board:</p>
-            <p class="home">
-              <a href="http://undefined/demo">undefined/demo</a>
-            </p>
-            <br /><br /><br />
-            <p class="home small">
-              sourcecode at
-              <a href="https://github.com/aliasaria/scrumblr">github</a>
-            </p>
+            <p class="home"><a href="http://undefined/demo">undefined/demo</a></p><br><br><br>
+            <p class="home small">sourcecode at <a href="https://github.com/aliasaria/scrumblr">github</a></p>
           </td>
         </tr>
       </table>
@@ -55,13 +47,11 @@
     <div class="sticker" id="sticker-red"></div>
     <div class="sticker" id="sticker-blue"></div>
     <div class="sticker" id="sticker-yellow"></div>
-    <div class="sticker" id="sticker-green"></div>
-    <br />
+    <div class="sticker" id="sticker-green"></div><br>
     <div class="sticker" id="sticker-pink"></div>
     <div class="sticker" id="sticker-lightblue"></div>
     <div class="sticker" id="sticker-orange"></div>
-    <div class="sticker" id="sticker-purple"></div>
-    <br />
+    <div class="sticker" id="sticker-purple"></div><br>
     <div class="sticker" id="sticker-gold"></div>
     <div class="sticker" id="sticker-bluestar"></div>
     <div class="sticker" id="sticker-silverstar"></div>
@@ -70,20 +60,16 @@
   <!--display # of active users here-->
   <div class="active-connections">connections: undefined</div>
   <!--<div style="width: 980px; height: 450px; border: solid 2px; opacity:.1; margin-top: 100px"> this will be the backlog that only appears on drag or perhaps not at all</div>-->
-  <script type="text/javascript">
+  <script type="text/javascript">	  
     var _gaq = _gaq || [];
-    _gaq.push(["_setAccount", "UA-2069672-4"]);
-    _gaq.push(["_trackPageview"]);
-    (function () {
-      var ga = document.createElement("script");
-      ga.type = "text/javascript";
+    _gaq.push(['_setAccount', 'UA-2069672-4']);
+    _gaq.push(['_trackPageview']);
+    (function () { var ga = document.createElement('script');
+      ga.type = 'text/javascript';
       ga.async = true;
-      ga.src =
-        ("https:" == document.location.protocol
-          ? "https://ssl"
-          : "http://www") + ".google-analytics.com/ga.js";
-      var s = document.getElementsByTagName("script")[0];
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0];
       s.parentNode.insertBefore(ga, s);
     })();
-  </script>
+    </script>
 </body>
