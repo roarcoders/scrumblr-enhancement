@@ -107,6 +107,7 @@ function getMessage(m) {
             //console.log(data);
             drawNewCard(data.id, data.text, data.x, data.y, data.rot, data.colour, data.type, null,
                 null);
+            alert(text);
             break;
 
         case 'deleteCard':
@@ -413,6 +414,8 @@ function addSticker(cardId, stickerId) {
 //----------------------------------
 function createCard(id, text, x, y, rot, colour, type) {
     drawNewCard(id, text, x, y, rot, colour, type, null, null);
+
+    alert(text);
 
     var action = "createCard";
 
