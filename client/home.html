@@ -1,29 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-  <!-- SCRIPTS -->
-  <script type="text/javascript">
-    function go() {
-      var value = document.forms[0].elements["name"].value;
-      value = escape(value);       // value is the name of the room
-      window.location.href = value; 
-      // window.location.href = 'index.html'; 
-      return false;
-      // window.open('https://scrumbler-frontend.s3-ap-southeast-2.amazonaws.com/index.html')
-    }
-  </script>
-  <link rel="stylesheet" type="text/css" href="css/style.css" />
-  <!-- FONTS -->
-  <link href='http://fonts.googleapis.com/css?family=Rock+Salt' rel='stylesheet' type='text/css'>
-  <link href='http://fonts.googleapis.com/css?family=Covered+By+Your+Grace' rel='stylesheet' type='text/css'>
-  <title>scrumblr</title>
-</head>
-
+  <head>
+    <!-- SCRIPTS -->
+    <script src="environment.js"></script>
+    <script src="still-frontend.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/style.css" />
+    <!-- FONTS -->
+    <link
+      href="http://fonts.googleapis.com/css?family=Rock+Salt"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      href="http://fonts.googleapis.com/css?family=Covered+By+Your+Grace"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <title>scrumblr</title>
+  </head>
 </html>
 
 <body>
-  <h1>scrumblr by <a href="http://aliasaria.ca">aliasaria</a></h1>
+
   <div class="board-outline">
     <div id="board">
       <div id="board-doodles"></div>
