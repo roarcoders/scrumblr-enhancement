@@ -107,7 +107,6 @@ function getMessage(m) {
             //console.log(data);
             drawNewCard(data.id, data.text, data.x, data.y, data.rot, data.colour, data.type, null,
                 null);
-            alert(text);
             break;
 
         case 'deleteCard':
@@ -412,10 +411,9 @@ function addSticker(cardId, stickerId) {
 //----------------------------------
 // cards
 //----------------------------------
-function createCard(id, text, x, y, rot, colour, type) {
+async function createCard(id, text, x, y, rot, colour, type) {
     drawNewCard(id, text, x, y, rot, colour, type, null, null);
-
-    alert(text);
+    
 
     var action = "createCard";
 
@@ -428,7 +426,7 @@ function createCard(id, text, x, y, rot, colour, type) {
         colour: colour,
         type: type
     };
-
+    await postNote("text","69761d59-d7a0-4e84-9a5b-c5119b068f9c");    
     sendAction(action, data);
 
 }
@@ -804,6 +802,7 @@ $(function() {
 
     $("#create-card")
         .click(function() {
+            alert("in create card")
             var rotation = Math.random() * 10 - 5; //add a bit of random rotation (+/- 5deg)
             uniqueID = Math.round(Math.random() * 99999999); //is this big enough to assure uniqueness?
             //alert(uniqueID);
