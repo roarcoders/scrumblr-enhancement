@@ -207,19 +207,7 @@ function drawNewCard(id, text, x, y, rot, colour, type, sticker, animationspeed)
             text + '</div><span class="filler"></span>\
         </div>';
     }
-    else if (type == 'sticky') {
-         h = '<div id="' + id + '" class="sticky ' + colour +
-         ' draggable cardstack" style="-webkit-transform:rotate(' + rot +
-         'deg);\
-        ">\
-        <svg class="card-icon delete-card-icon" width="15" height="15"><use xlink:href="teenyicons/teenyicons-outline-sprite.svg#outline--x-circle" /></svg>\
-        <img class="card-image" src="images/postit/p' + colour + '.png">\
-        <div id="content:' + id +
-            '" class="content stickertarget droppable">' +
-            text + '</div><span class="filler"></span>\
-        </div>';
-    }
-
+    
     var card = $(h);
     card.appendTo('#board');
 
@@ -812,23 +800,6 @@ $(function() {
                 randomCardColour(),
                 "card");
         });
-    
-    $("#create-sticky")
-
-        .click(function() {
-            var rotation = Math.random() * 4 - 2; //add a bit of random rotation (+/- 2deg)
-            uniqueID = Math.round(Math.random() * 99999999); //is this big enough to assure uniqueness?
-            //alert(uniqueID);
-            createCard(
-                'card' + uniqueID,
-                '',
-                58, $('div.board-outline').height(), // hack - not a great way to get the new card coordinates, but most consistant ATM
-                rotation,
-                randomStickyColour(),
-                "sticky");
-        });
-
-
 
     // Style changer
     $("#smallify").click(function() {
