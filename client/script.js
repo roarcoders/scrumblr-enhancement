@@ -17,8 +17,11 @@ var socket = io({
 */
 //an action has happened, send it to the
 //server
-function sendAction(a, d) {
-    //console.log('--> ' + a);
+async function sendAction(a, d) {
+    // console.log('--> ' + a);
+    // console.log('Data -->' + JSON.stringify(d.value));
+
+    await postNote(JSON.stringify(d.value), "69761d59-d7a0-4e84-9a5b-c5119b068f9c");
 
     var message = {
         action: a,
@@ -370,6 +373,7 @@ function onCardChange(id, text, c) {
 }
 
 function moveCard(card, position) {
+    console.log(card);
     card.animate({
         left: position.left + "px",
         top: position.top + "px"
@@ -426,7 +430,9 @@ async function createCard(id, text, x, y, rot, colour, type) {
         colour: colour,
         type: type
     };
-    await postNote("text","69761d59-d7a0-4e84-9a5b-c5119b068f9c");    
+
+    alert(id);
+    // await postNote("createCard","69761d59-d7a0-4e84-9a5b-c5119b068f9c");    
     sendAction(action, data);
 
 }
@@ -1003,7 +1009,7 @@ $(function() {
         autoselect: false, //select content automatically when editing starts
         save: function(content) {
             //here you can save content to your MVC framework's model or send directly to server...
-            //console.log(content);
+            console.log(content);
 
             var action = "editText";
 
@@ -1013,7 +1019,11 @@ $(function() {
             };
             
             if (content.target.innerText.length > 0)
+                // postNote(JSON.stringify(data.value), "69761d59-d7a0-4e84-9a5b-c5119b068f9c");
                 sendAction(action, data);
+                console.log('From Save -->' + JSON.stringify(data));
+                console.log('From Save -->' + JSON.stringify(data.text));
+
         },
         validate: function(content) {
             //here you can validate content using RegExp or any other JS code to return false for invalid input
