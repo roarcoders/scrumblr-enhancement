@@ -4,6 +4,7 @@ var columns = [];
 var currentTheme = "bigcards";
 var boardInitialized = false;
 var keyTrap = null;
+let textForNotes = [];
 
 var baseurl = location.pathname.substring(0, location.pathname.lastIndexOf('/'));
 /*------removing socketIO references----------(Jason)
@@ -20,8 +21,8 @@ var socket = io({
 async function sendAction(a, d) {
     // console.log('--> ' + a);
     // console.log('Data -->' + JSON.stringify(d.value));
-
-    await postNote(JSON.stringify(d.value), "39a7d86e-38bf-453c-b71a-4545aa6653e3");
+    
+    
 
     var message = {
         action: a,
@@ -86,6 +87,12 @@ function getMessage(m) {
 
     //console.log('<-- ' + action);
     //console.log(message);
+    // let note = {
+    //     id:data.id,
+    //     text:data.text
+    // }
+    // textForNotes.append(note);
+    // console.log("array -> " + textForNotes);
 
     switch (action) {
         case 'roomAccept':
@@ -110,6 +117,7 @@ function getMessage(m) {
             //console.log(data);
             drawNewCard(data.id, data.text, data.x, data.y, data.rot, data.colour, data.type, null,
                 null);
+            
             break;
 
         case 'deleteCard':
@@ -127,6 +135,7 @@ function getMessage(m) {
                 $('#' + data.id).children('.change-colour').data('colour',data.colour);
                 $('#' + data.id).children('.card-image').attr("src", 'images/' + data.colour + '-card.png');
             }
+
             break;
 
         case 'initColumns':
@@ -178,7 +187,7 @@ function getMessage(m) {
             break;
     }
 
-
+    
 }
 
 function updateText (item, text) {
@@ -193,6 +202,7 @@ $(document).bind('keyup', function(event) {
 });
 
 function drawNewCard(id, text, x, y, rot, colour, type, sticker, animationspeed) {
+    
     //cards[id] = {id: id, text: text, x: x, y: y, rot: rot, colour: colour};
 
     var h = '';
@@ -364,12 +374,15 @@ function drawNewCard(id, text, x, y, rot, colour, type, sticker, animationspeed)
 }
 
 
-function onCardChange(id, text, c) {
+async function onCardChange(id, text, c) {
     sendAction('editCard', {
         id: id,
         value: text,
         colour: c
     });
+
+    addTextToArray(id,text)
+    await postNote(text, "39a7d86e-38bf-453c-b71a-4545aa6653e3")
 }
 
 function moveCard(card, position) {
@@ -417,7 +430,6 @@ function addSticker(cardId, stickerId) {
 //----------------------------------
 async function createCard(id, text, x, y, rot, colour, type) {
     drawNewCard(id, text, x, y, rot, colour, type, null, null);
-    
 
     var action = "createCard";
 
@@ -431,10 +443,17 @@ async function createCard(id, text, x, y, rot, colour, type) {
         type: type
     };
 
-    alert(id);
-    // await postNote("createCard","69761d59-d7a0-4e84-9a5b-c5119b068f9c");    
     sendAction(action, data);
 
+}
+
+function addTextToArray(id, text) {
+    let note = {
+        id:id,
+        data:text
+    }
+    textForNotes.push(note)
+    console.log("array -> " + JSON.stringify(textForNotes[0]))
 }
 
 var cardColours = ['yellow', 'green', 'blue', 'white'];
@@ -808,7 +827,6 @@ $(function() {
 
     $("#create-card")
         .click(function() {
-            alert("in create card")
             var rotation = Math.random() * 10 - 5; //add a bit of random rotation (+/- 5deg)
             uniqueID = Math.round(Math.random() * 99999999); //is this big enough to assure uniqueness?
             //alert(uniqueID);
@@ -1019,10 +1037,8 @@ $(function() {
             };
             
             if (content.target.innerText.length > 0)
-                // postNote(JSON.stringify(data.value), "69761d59-d7a0-4e84-9a5b-c5119b068f9c");
                 sendAction(action, data);
-                console.log('From Save -->' + JSON.stringify(data));
-                console.log('From Save -->' + JSON.stringify(data.text));
+                
 
         },
         validate: function(content) {
