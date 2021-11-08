@@ -190,6 +190,15 @@ function getMessage(m) {
     
 }
 
+async function updateArray()
+{
+    textForNotes.forEach( async function(entry) {
+        console.log(entry.data);
+       await postNote(entry.data, "fccd6e1d-41ba-4aba-a656-bdd165ea3f53");
+      });
+      alert("insertion successfull");
+}
+
 function updateText (item, text) {
     if (item == 'board-title' && text != '') {
         $('#board-title').text(text);
@@ -382,7 +391,7 @@ async function onCardChange(id, text, c) {
     });
 
     addTextToArray(id,text)
-    await postNote(text, "39a7d86e-38bf-453c-b71a-4545aa6653e3")
+    //await postNote(text, "39a7d86e-38bf-453c-b71a-4545aa6653e3")
 }
 
 function moveCard(card, position) {
@@ -453,7 +462,10 @@ function addTextToArray(id, text) {
         data:text
     }
     textForNotes.push(note)
-    console.log("array -> " + JSON.stringify(textForNotes[0]))
+    textForNotes.forEach(function(entry) {
+        console.log(entry);
+      });
+    
 }
 
 var cardColours = ['yellow', 'green', 'blue', 'white'];
