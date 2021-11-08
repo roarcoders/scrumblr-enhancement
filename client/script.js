@@ -5,6 +5,7 @@ var currentTheme = "bigcards";
 var boardInitialized = false;
 var keyTrap = null;
 let textForNotes = [];
+const noteStatus = {NI:"Not Inserted", I:"Inserted"}
 
 var baseurl = location.pathname.substring(0, location.pathname.lastIndexOf('/'));
 /*------removing socketIO references----------(Jason)
@@ -192,10 +193,20 @@ function getMessage(m) {
 
 async function updateArray()
 {
-    textForNotes.forEach( async function(entry) {
+
+    textForNotes.forEach(async function(entry) {
         console.log(entry.data);
-       await postNote(entry.data, "fccd6e1d-41ba-4aba-a656-bdd165ea3f53");
+        switch (entry.data.status){
+            case "Not Inserted":
+                await postNote(entry.data.text, "049d4960-b478-409b-979a-57e66335da45");
+            break;
+            default:
+
+        }
+        
+        
       });
+
       alert("insertion successfull");
 }
 
@@ -391,7 +402,6 @@ async function onCardChange(id, text, c) {
     });
 
     addTextToArray(id,text)
-    //await postNote(text, "39a7d86e-38bf-453c-b71a-4545aa6653e3")
 }
 
 function moveCard(card, position) {
@@ -458,8 +468,9 @@ async function createCard(id, text, x, y, rot, colour, type) {
 
 function addTextToArray(id, text) {
     let note = {
-        id:id,
-        data:text
+        id: id,
+        data: text,
+        status: noteStatus.NI
     }
     textForNotes.push(note)
     textForNotes.forEach(function(entry) {
