@@ -151,6 +151,8 @@
     
     //Retrieve and append board name on load.
     window.onload = localStorage.getItem("boardName");
+    //window.onload = localStorage.getItem("boardId");
+    console.log(localStorage.getItem("boardId"));
     //Replace file name with board name.
     window.history.replaceState(
       null,

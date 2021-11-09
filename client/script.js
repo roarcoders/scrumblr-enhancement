@@ -196,9 +196,11 @@ async function updateArray()
 
     textForNotes.forEach(async function(entry) {
         console.log(entry.data);
-        switch (entry.data.status){
+        switch (entry.status){
             case "Not Inserted":
-                await postNote(entry.data.text, "049d4960-b478-409b-979a-57e66335da45");
+                await postNote(entry.data, localStorage.getItem("boardId"));
+                entry.status = noteStatus.I;
+                alert("insertion successfull");
             break;
             default:
 
@@ -207,7 +209,7 @@ async function updateArray()
         
       });
 
-      alert("insertion successfull");
+      
 }
 
 function updateText (item, text) {

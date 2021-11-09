@@ -21,6 +21,8 @@ async function go() {
 
   localStorage.setItem("boardName", value);
   await postBoardName(value);
+  localStorage.setItem("boardId", sessionBoardId.BoardId);
+
   
 
 
@@ -44,6 +46,7 @@ async function go() {
   // }
   //Uncomment or comment when testing
   // console.log(getBoardByName(value));
+  console.log(sessionBoardId);
 
 
 }
@@ -68,7 +71,7 @@ async function postBoardName(boardName) {
     }),
   })
     .then((response) => {
-      window.location.href = "index.html";
+    window.location.href = "index.html";
       // middlware_boardid=JSON.stringify(response.JSON());
       response_status = response.status;
       return response.text().then(function (text) {
