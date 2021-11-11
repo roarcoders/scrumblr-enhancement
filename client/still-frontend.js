@@ -12,6 +12,7 @@ async function go() {
   var value = document.forms[0].elements["name"].value;
   value = escape(value);
 
+  getBoard();
   
   //patchBoardName("74171dcb-ee89-496a-828a-1b1c7302f628", "I am a small board")
   // deleteBoard("09e49698-05b6-4457-8271-2a288af9f6f5")
