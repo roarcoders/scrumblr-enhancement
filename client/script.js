@@ -1071,3 +1071,7 @@ $(function() {
 
     
 });
+
+function closeAlert() {
+    document.getElementById('confirmation-prompt').style.display = 'none';
+}
