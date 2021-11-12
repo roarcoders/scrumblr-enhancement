@@ -206,7 +206,7 @@ async function updateArray()
         }
       });      
       
-      prompt('Saved Successfully');
+    document.getElementById('confirmation-prompt').style.display = 'block';
 }
 
 function updateText (item, text) {

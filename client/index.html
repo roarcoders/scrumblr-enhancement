@@ -93,11 +93,11 @@
       </div>
       <div id="confirmation-prompt" class="alert">
           <div class="alert-header">
-            <strong class="mr-auto text-primary">Alert Header</strong>
+            <strong class="mr-auto text-primary">Confirmation</strong>
             <div><button type="button" class="ml-2 mb-1 close" onclick="closeAlert()">x</button></div>
           </div>
           <div class="alert-body">
-            Some text inside body
+          Board and notes saved successfully
           </div>
       </div>
       <div class="buttons">
@@ -169,6 +169,9 @@
       localStorage.getItem("boardName")
     );
     document.getElementById("board-title").innerHTML = localStorage.getItem("boardName");
-    
+   
+    window.onload = function (){
+      document.getElementById('confirmation-prompt').style.display = 'none';
+    }
   </script>
 </html>
