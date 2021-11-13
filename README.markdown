@@ -19,7 +19,7 @@ The idea of the amin project is to create an enhancement version of the web appl
 * Javascript
 
 
-## Architecture	## Architecture
+## Architecture
 ![](architecture-diagram.jpeg)
 
 ## For External Collaborators
