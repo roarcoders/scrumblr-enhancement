@@ -4,7 +4,7 @@ var columns = [];
 var currentTheme = "bigcards";
 var boardInitialized = false;
 var keyTrap = null;
-let textForNotes = [];
+const textForNotes = new Map();
 const noteStatus = {NI:"Not Inserted", I:"Inserted"}
 
 var baseurl = location.pathname.substring(0, location.pathname.lastIndexOf('/'));
@@ -194,12 +194,17 @@ function getMessage(m) {
 async function updateArray()
 {
 
-    textForNotes.forEach(async function(entry) {
-        console.log(entry.data);
-        switch (entry.status) {
+    textForNotes.forEach(async function(value, key) {
+        console.log(value.status);
+        switch (value.status) {
             case "Not Inserted":
-                await postNote(entry.data, localStorage.getItem("boardId"));
-                entry.status = noteStatus.I;
+                await postNote(value.data, localStorage.getItem("boardId"));
+                let note = {
+                    id: key,
+                    data: value.data,
+                    status: noteStatus.I
+                }
+                textForNotes.set(key, note);
                 
             break;
             default:
@@ -471,9 +476,9 @@ function addTextToArray(id, text) {
         data: text,
         status: noteStatus.NI
     }
-    textForNotes.push(note)
-    textForNotes.forEach(function(entry) {
-        console.log(entry);
+    textForNotes.set(note.id, note)
+    textForNotes.forEach(function(value, key) {
+        console.log(key+ ":" + value.data);
       });
     
 }
