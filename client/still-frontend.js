@@ -139,10 +139,6 @@ async function getBoardById(boardIdtoGet) {
     .then((response) => {
       return response.json();
     })
-    .then((data) => {
-      //See what this is by running git blame. Determine who it was committed by.
-      return (boardNameFromDb = data.BoardName);
-    });
 }
 
 async function getNote(boardId, noteId) {
@@ -232,4 +228,32 @@ async function patchBoardName(boardId, newName) {
     .then((json) => {
       console.log(JSON.stringify(json));
     });
+}
+
+async function getButtonClick() {
+  const boardId = document.getElementById("board-id").value;
+  const board = await getBoardById(`${boardId}`);
+
+  const boardHeading = document.getElementById("board-title");
+  boardHeading.innerText = board.BoardName;
+
+  const boardTable = document.getElementById("board-table");
+  const boardNotes = board.board_notes;
+  const notes = boardNotes.map((note) => createNote(note.topic, note.dateCreated))
+  notes.forEach(note => boardTable.appendChild(note))
+}
+
+function createNote(topic, dateCreated) {
+  var topicElement = document.createElement("p");
+  var topicText = document.createTextNode(topic);
+  topicElement.appendChild(topicText);
+
+  var dateCreatedElement = document.createElement("p");
+  var dateCreatedText = document.createTextNode(dateCreated);
+  dateCreatedElement.appendChild(dateCreatedText);
+
+  var note = document.createElement("div");
+  note.appendChild(topicElement);
+  note.appendChild(dateCreatedElement);
+  return note;
 }
