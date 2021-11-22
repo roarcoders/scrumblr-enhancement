@@ -112,6 +112,7 @@ function getBoardByName(value) {
 
 async function postNote(value, boardIdtopost) {
   let noteName = value;
+  let status = 400;
   await fetch(url + boardIdtopost + "/note/", {
     method: "POST",
     mode: "cors",
@@ -124,10 +125,11 @@ async function postNote(value, boardIdtopost) {
     }),
   }).then((response) => {
     return response.text().then(function (text) {
-      return text ? JSON.parse(text) : {};
+      status = response.status;
+      return text ? JSON.parse(text) : {}
     });
   });
-  console.log("note inserted");
+  return status;
 }
 
 async function getBoardById(boardIdtoGet) {

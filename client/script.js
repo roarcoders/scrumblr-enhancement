@@ -192,26 +192,30 @@ function getMessage(m) {
 }
 
 async function updateArray()
-{
+{ 
+
+    
 
     textForNotes.forEach(async function(value, key) {
         console.log(value.status);
         switch (value.status) {
             case "Not Inserted":
-                await postNote(value.data, localStorage.getItem("boardId"));
-                let note = {
-                    id: key,
-                    data: value.data,
-                    status: noteStatus.I
+                let currentStatus = await postNote(value.data, localStorage.getItem("boardId"));
+                switch (currentStatus) {
+                    case 200:
+                        openAlert()
+                        let note = {
+                            id: key,
+                            data: value.data,
+                            status: noteStatus.I
+                        }
+                        textForNotes.set(key, note)   
                 }
-                textForNotes.set(key, note);
-                
             break;
             default:
         }
       });      
-      
-    document.getElementById('confirmation-prompt').style.display = 'block';
+
 }
 
 function updateText (item, text) {
@@ -1079,4 +1083,8 @@ $(function() {
 
 function closeAlert() {
     document.getElementById('confirmation-prompt').style.display = 'none';
+}
+
+function openAlert() {
+    document.getElementById('confirmation-prompt').style.display = 'block';
 }
