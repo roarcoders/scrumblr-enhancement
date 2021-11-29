@@ -1,3 +1,5 @@
+const { key } = require("nconf");
+
 let sessionBoardId;
 let url = ENV.URL;
 
@@ -121,6 +123,7 @@ async function postNote(value, boardIdtopost) {
       "Access-Control-Allow-Origin": "*",
     },
     body: JSON.stringify({
+      id:key,
       singleNote: noteName,
     }),
   }).then((response) => {
