@@ -198,9 +198,11 @@ async function updateArray()
 
     textForNotes.forEach(async function(value, key) {
         console.log(value.status);
+       
+        let currentStatus=404;
         switch (value.status) {
             case "Not Inserted":
-                let currentStatus = await postNote(value.data, localStorage.getItem("boardId"));
+                 currentStatus = await postNote(value.data, localStorage.getItem("boardId"));
                 switch (currentStatus) {
                     case 200:
                         openAlert()
@@ -212,6 +214,8 @@ async function updateArray()
                         textForNotes.set(key, note)   
                 }
             break;
+            case "Inserted":
+                currentStatus = await patchNote("8baa2be4-5a33-400d-b8ec-a654917afeb8","" )
             default:
         }
       });      
@@ -875,7 +879,7 @@ $(function() {
         .click(function() {
             var rotation = Math.random() * 4 - 2; //add a bit of random rotation (+/- 2deg)
             uniqueID = Math.round(Math.random() * 99999999); //is this big enough to assure uniqueness?
-            //alert(uniqueID);
+           console.log(uniqueID);
             createCard(
                 'card' + uniqueID,
                 '',
