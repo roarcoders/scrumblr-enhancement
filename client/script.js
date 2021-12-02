@@ -193,16 +193,15 @@ function getMessage(m) {
 
 async function updateArray()
 { 
-
-    
+    console.log(textForNotes);
+    let sessionBoardId = localStorage.getItem("boardId");
 
     textForNotes.forEach(async function(value, key) {
-        console.log(value.status);
        
         let currentStatus=404;
         switch (value.status) {
             case "Not Inserted":
-                 currentStatus = await postNote(value.data, localStorage.getItem("boardId"));
+                currentStatus = await postNote(sessionBoardId,key,value.data);
                 switch (currentStatus) {
                     case 200:
                         openAlert()
@@ -215,7 +214,7 @@ async function updateArray()
                 }
             break;
             case "Inserted":
-                currentStatus = await patchNote("8baa2be4-5a33-400d-b8ec-a654917afeb8","" )
+                currentStatus = await patchNote(sessionBoardId,key,value.data);
             default:
         }
       });      
