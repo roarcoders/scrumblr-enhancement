@@ -1,3 +1,5 @@
+//const e = require("cors");
+
 var cards = {};
 var totalcolumns = 0;
 var columns = [];
@@ -193,12 +195,13 @@ function getMessage(m) {
 
 async function updateArray()
 { 
-    console.log(textForNotes);
+    
     let sessionBoardId = localStorage.getItem("boardId");
 
     textForNotes.forEach(async function(value, key) {
        
         let currentStatus=404;
+        console.log(value.status);
         switch (value.status) {
             case "Not Inserted":
                 currentStatus = await postNote(sessionBoardId,key,value.data);
@@ -210,7 +213,7 @@ async function updateArray()
                             data: value.data,
                             status: noteStatus.I
                         }
-                        textForNotes.set(key, note)   
+                        textForNotes.set(key, note);  
                 }
             break;
             case "Inserted":
@@ -478,11 +481,25 @@ async function createCard(id, text, x, y, rot, colour, type) {
 }
 
 function addTextToArray(id, text) {
-    let note = {
+    let note={};
+    console.log(textForNotes.has(id));
+    if(!textForNotes.has(id))
+    {
+        note = {
         id: id,
         data: text,
         status: noteStatus.NI
     }
+}
+else
+{
+    note = 
+    {
+        id:id,
+        data:text,
+        status: noteStatus.I
+    }
+}
     textForNotes.set(note.id, note)
     textForNotes.forEach(function(value, key) {
         console.log(key+ ":" + value.data);
