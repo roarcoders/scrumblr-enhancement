@@ -12,7 +12,9 @@ async function go() {
   var value = document.forms[0].elements["name"].value;
   value = escape(value);
 
-  getBoard();
+  //getBoard();
+  //getBoards();
+  await getBoardNames();
   
   //patchBoardName("74171dcb-ee89-496a-828a-1b1c7302f628", "I am a small board")
   // deleteBoard("09e49698-05b6-4457-8271-2a288af9f6f5")
@@ -21,7 +23,7 @@ async function go() {
   //getBoards();
 
   localStorage.setItem("boardName", value);
-  await postBoardName(value);
+  //await postBoardName(value);
   localStorage.setItem("boardId", sessionBoardId.BoardId);
 
   
@@ -72,7 +74,7 @@ async function postBoardName(boardName) {
     }),
   })
     .then((response) => {
-    window.location.href = "index.html";
+    //window.location.href = "index.html";
       // middlware_boardid=JSON.stringify(response.JSON());
       response_status = response.status;
       return response.text().then(function (text) {
@@ -82,6 +84,14 @@ async function postBoardName(boardName) {
 
     .catch((err) => console.log(err));
     
+}
+
+async function getBoardNames(){
+  return await fetch(url)
+  .then((response) => response.text())
+  .then((json) => {
+    console.log(JSON.stringify(json))
+  });
 }
 
 async function getBoards() {
