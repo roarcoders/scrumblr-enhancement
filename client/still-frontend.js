@@ -1,5 +1,6 @@
 let sessionBoardId;
 let url = ENV.URL;
+let boardNames;
 
 async function getBoard()
 {
@@ -11,6 +12,11 @@ async function getBoard()
 async function go() {
   var value = document.forms[0].elements["name"].value;
   value = escape(value);
+
+  console.log(boardNames);
+  console.log(boardNames.find(items => {
+     return items[0].BoardName == value;
+  }));
 
   //getBoard();
   //getBoards();
@@ -90,7 +96,7 @@ async function getBoardNames(){
   return await fetch(url)
   .then((response) => response.text())
   .then((json) => {
-    console.log(JSON.stringify(json))
+    boardNames = (JSON.parse(json).Items);
   });
 }
 
