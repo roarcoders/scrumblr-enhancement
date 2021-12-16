@@ -79,13 +79,31 @@ async function postBoardName(boardName) {
     .catch((err) => console.log(err));
     
 }
-
+/**
+ * Get all the board names from the specific URL.
+ *
+ * @async
+ * @function getBoards
+ * @returns {Promise<object | Error>} returns a promise object as all the board names from the fetch request or throws an error
+ */
 async function getBoards() {
-  let boards = await fetch(url)
-    .then((response) => response.text())
-    .then((json) => {
-      console.log(JSON.stringify(json));
-    });
+try {
+  const response = await fetch(url, {
+    method: 'GET',
+    mode: "cors",
+    headers: {
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "*",
+    },
+  });
+  if(response.ok) {
+    const boardsObject = await response.json();
+    return boardsObject;
+  }
+  throw Error({message: response.statusText})
+} catch (error) {
+  console.error(error.message ? error.message : error);
+}
 }
 
 function getBoardByName(value) {
