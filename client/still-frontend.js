@@ -13,15 +13,19 @@ async function go() {
   var value = document.forms[0].elements["name"].value;
   value = escape(value);
 
-  console.log(boardNames);
-  console.log(boardNames.find(items => {
-     return items[0].BoardName == value;
-  }));
+  // console.log('boardNames before -> ' + boardNames);
+  // console.log(boardNames.find(items => {
+  //   return items[0].BoardName == value;
+  // }));
 
   //getBoard();
   //getBoards();
-  await getBoardNames();
-  
+  boardNames = await getBoardNames();
+  console.log(typeof boardNames);
+  console.log('boardNames -> ' + boardNames);
+  console.log(boardNames.find(({ BoardName }) => BoardName == value ));
+
+
   //patchBoardName("74171dcb-ee89-496a-828a-1b1c7302f628", "I am a small board")
   // deleteBoard("09e49698-05b6-4457-8271-2a288af9f6f5")
   // getBoardById("69761d59-d7a0-4e84-9a5b-c5119b068f9c");
@@ -93,11 +97,13 @@ async function postBoardName(boardName) {
 }
 
 async function getBoardNames(){
-  return await fetch(url)
-  .then((response) => response.text())
+  return await fetch(url + "boardNames")
+  .then((response) => response.json())
   .then((json) => {
-    boardNames = (JSON.parse(json).Items);
+    return boardNames = json.Items;
   });
+
+  // return boardNames;
 }
 
 async function getBoards() {
