@@ -22,8 +22,12 @@ async function go() {
   //getBoards();
   boardNames = await getBoardNames();
   console.log(typeof boardNames);
-  console.log('boardNames -> ' + boardNames);
-  console.log(boardNames.find(({ BoardName }) => BoardName == value ));
+  console.log("boardName.BoardName JSON Stringify-> ", boardNames.Items);
+  // const boardNamesKey = Object.keys(boardNames)
+  // const boardNamesValues = Object.values(boardNames)
+  //console.log(boardNamesValues);
+  const items = {"BoardName":value};
+  console.log(boardNames.Items.find(({ item }) => item === items ));
 
 
   //patchBoardName("74171dcb-ee89-496a-828a-1b1c7302f628", "I am a small board")
@@ -96,12 +100,24 @@ async function postBoardName(boardName) {
     
 }
 
-async function getBoardNames(){
-  return await fetch(url + "boardNames")
-  .then((response) => response.json())
-  .then((json) => {
-    return boardNames = json.Items;
+async function getBoardNames() {
+  const response = await fetch(url + "boardNames", {
+    method: 'GET',
+    mode: "cors",
+    headers: {
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "*",
+    },
   });
+  if(response.ok) {
+    const boardsObject = await response.json();
+    return boardsObject;
+  }
+  // return await fetch(url + "boardNames")
+  // .then((response) => response.json())
+  // .then((json) => {
+  //   return boardNames = json.Items;
+  // });
 
   // return boardNames;
 }
@@ -109,9 +125,12 @@ async function getBoardNames(){
 async function getBoards() {
   let boards = await fetch(url)
     .then((response) => response.text())
-    .then((json) => {
-      console.log(JSON.stringify(json));
-    });
+    // .then((json) => {
+    //   console.log(JSON.stringify(json));
+    if (response.ok) {
+      const boardsObject = await response.json();
+      return boardsObject;
+    }
 }
 
 function getBoardByName(value) {
