@@ -83,10 +83,10 @@ async function postBoardName(boardName) {
  * Get all the board names from the specific URL.
  *
  * @async
- * @function getBoards
+ * @function getBoardNames
  * @returns {Promise<object | Error>} returns a promise object as all the board names from the fetch request or throws an error
  */
-async function getBoards() {
+async function getBoardNames() {
 try {
   const response = await fetch(url, {
     method: 'GET',
