@@ -20,14 +20,15 @@ async function go() {
 
   //getBoard();
   //getBoards();
-  boardNames = await getBoardNames();
-  console.log(typeof boardNames);
-  console.log("boardName.BoardName JSON Stringify-> ", boardNames.Items);
-  // const boardNamesKey = Object.keys(boardNames)
-  // const boardNamesValues = Object.values(boardNames)
-  //console.log(boardNamesValues);
-  const items = {"BoardName":value};
-  console.log(boardNames.Items.find(({ item }) => item === items ));
+  
+  // boardNames = await getBoardNames();
+  // console.log(typeof boardNames);
+  // console.log("boardName.BoardName JSON Stringify-> ", boardNames.Items);
+  // // const boardNamesKey = Object.keys(boardNames)
+  // // const boardNamesValues = Object.values(boardNames)
+  // //console.log(boardNamesValues);
+  // const items = {"BoardName":value};
+  // console.log(boardNames.Items.find(({ item }) => item === items ));
 
 
   //patchBoardName("74171dcb-ee89-496a-828a-1b1c7302f628", "I am a small board")
@@ -37,7 +38,7 @@ async function go() {
   //getBoards();
 
   localStorage.setItem("boardName", value);
-  //await postBoardName(value);
+  await postBoardName(value);
   localStorage.setItem("boardId", sessionBoardId.BoardId);
 
   
@@ -88,7 +89,7 @@ async function postBoardName(boardName) {
     }),
   })
     .then((response) => {
-    //window.location.href = "index.html";
+      window.location.href = "index.html";
       // middlware_boardid=JSON.stringify(response.JSON());
       response_status = response.status;
       return response.text().then(function (text) {
