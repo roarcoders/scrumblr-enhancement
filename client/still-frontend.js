@@ -1,5 +1,6 @@
 let sessionBoardId;
 let url = ENV.URL;
+let boardNames;
 
 async function getBoard()
 {
@@ -12,7 +13,23 @@ async function go() {
   var value = document.forms[0].elements["name"].value;
   value = escape(value);
 
-  
+  // console.log('boardNames before -> ' + boardNames);
+  // console.log(boardNames.find(items => {
+  //   return items[0].BoardName == value;
+  // }));
+
+  //getBoard();
+  //getBoards();
+  boardNames = await getBoardNames();
+  console.log(typeof boardNames);
+  console.log("boardName.BoardName JSON Stringify-> ", boardNames.Items);
+  // const boardNamesKey = Object.keys(boardNames)
+  // const boardNamesValues = Object.values(boardNames)
+  //console.log(boardNamesValues);
+  const items = {"BoardName":value};
+  console.log(boardNames.Items.find(({ item }) => item === items ));
+
+
   //patchBoardName("74171dcb-ee89-496a-828a-1b1c7302f628", "I am a small board")
   // deleteBoard("09e49698-05b6-4457-8271-2a288af9f6f5")
   // getBoardById("69761d59-d7a0-4e84-9a5b-c5119b068f9c");
@@ -20,7 +37,9 @@ async function go() {
   //getBoards();
 
   localStorage.setItem("boardName", value);
-  await postBoardName(value);
+  //await postBoardName(value);
+  localStorage.setItem("boardId", sessionBoardId.BoardId);
+
   
 
 
@@ -44,6 +63,7 @@ async function go() {
   // }
   //Uncomment or comment when testing
   // console.log(getBoardByName(value));
+  console.log(sessionBoardId);
 
 
 }
@@ -68,7 +88,7 @@ async function postBoardName(boardName) {
     }),
   })
     .then((response) => {
-      window.location.href = "index.html";
+    //window.location.href = "index.html";
       // middlware_boardid=JSON.stringify(response.JSON());
       response_status = response.status;
       return response.text().then(function (text) {
@@ -80,12 +100,37 @@ async function postBoardName(boardName) {
     
 }
 
+async function getBoardNames() {
+  const response = await fetch(url + "boardNames", {
+    method: 'GET',
+    mode: "cors",
+    headers: {
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "*",
+    },
+  });
+  if(response.ok) {
+    const boardsObject = await response.json();
+    return boardsObject;
+  }
+  // return await fetch(url + "boardNames")
+  // .then((response) => response.json())
+  // .then((json) => {
+  //   return boardNames = json.Items;
+  // });
+
+  // return boardNames;
+}
+
 async function getBoards() {
   let boards = await fetch(url)
     .then((response) => response.text())
-    .then((json) => {
-      console.log(JSON.stringify(json));
-    });
+    // .then((json) => {
+    //   console.log(JSON.stringify(json));
+    if (response.ok) {
+      const boardsObject = await response.json();
+      return boardsObject;
+    }
 }
 
 function getBoardByName(value) {
@@ -106,8 +151,9 @@ function getBoardByName(value) {
   // return currentBoard;
 }
 
-async function postNote(value, boardIdtopost) {
+async function postNote(boardIdtopost, note_Id, value) {
   let noteName = value;
+  let status = 400;
   await fetch(url + boardIdtopost + "/note/", {
     method: "POST",
     mode: "cors",
@@ -116,14 +162,16 @@ async function postNote(value, boardIdtopost) {
       "Access-Control-Allow-Origin": "*",
     },
     body: JSON.stringify({
+      noteId: note_Id,
       singleNote: noteName,
     }),
   }).then((response) => {
     return response.text().then(function (text) {
-      return text ? JSON.parse(text) : {};
+      status = response.status;
+      return text ? JSON.parse(text) : {}
     });
   });
-  console.log("note inserted");
+  return status;
 }
 
 async function getBoardById(boardIdtoGet) {

@@ -44,6 +44,7 @@
     <!--<script src="socketio/socket.io.js"></script>-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.1/socket.io.min.js"></script>
     <!-- ** My Script ** -->
+    <script src="script.js"></script>
     <script src="environment.js"></script>
     <script src="still-frontend.js"></script>
     <title></title>
@@ -90,12 +91,34 @@
           </table>
         </div>
       </div>
+      <div id="confirmation-prompt" class="alert">
+          <div class="alert-header">
+            <strong class="mr-auto text-primary">Confirmation</strong>
+            <div><button type="button" class="ml-2 mb-1 close" onclick="closeAlert()">x</button></div>
+          </div>
+          <div class="alert-body">
+          Board and notes saved successfully
+          </div>
+      </div>
       <div class="buttons">
         <svg class="bottom-icon" id="create-card" width="20" height="20">
           <use
             xlink:href="teenyicons/teenyicons-outline-sprite.svg#outline--text-document"
           />
         </svg>
+        <svg class="bottom-icon" id="create-sticky" width="20" height="20">
+          <use
+            xlink:href="teenyicons/teenyicons-outline-sprite.svg#outline--note"
+          />
+        </svg>
+        <div id="save-button" onclick="return updateArray()">
+        <svg class="bottom-icon" id="save-sticky" width="20" height="20">
+          <use
+            xlink:href="teenyicons/teenyicons-outline-sprite.svg#outline--save"
+          />
+        </svg>
+      </div>
+        <!-- <svg viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg" width="15" height="15"><path d="M4.5 14.5v-3a1 1 0 011-1h4a1 1 0 011 1v3m3 0h-12a1 1 0 01-1-1v-12a1 1 0 011-1h8.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V13.5a1 1 0 01-1 1z" stroke="currentColor"></path></svg> -->
       </div>
       <div class="stickers">
         <div class="sticker" id="sticker-red"></div>
@@ -137,6 +160,8 @@
     
     //Retrieve and append board name on load.
     window.onload = localStorage.getItem("boardName");
+    //window.onload = localStorage.getItem("boardId");
+    console.log(localStorage.getItem("boardId"));
     //Replace file name with board name.
     window.history.replaceState(
       null,
@@ -144,6 +169,9 @@
       localStorage.getItem("boardName")
     );
     document.getElementById("board-title").innerHTML = localStorage.getItem("boardName");
-    
+   
+    window.onload = function (){
+      document.getElementById('confirmation-prompt').style.display = 'none';
+    }
   </script>
 </html>

@@ -1,9 +1,13 @@
+//const e = require("cors");
+
 var cards = {};
 var totalcolumns = 0;
 var columns = [];
 var currentTheme = "bigcards";
 var boardInitialized = false;
 var keyTrap = null;
+const textForNotes = new Map();
+const noteStatus = {NI:"Not Inserted", I:"Inserted"}
 
 var baseurl = location.pathname.substring(0, location.pathname.lastIndexOf('/'));
 /*------removing socketIO references----------(Jason)
@@ -17,8 +21,11 @@ var socket = io({
 */
 //an action has happened, send it to the
 //server
-function sendAction(a, d) {
-    //console.log('--> ' + a);
+async function sendAction(a, d) {
+    // console.log('--> ' + a);
+    // console.log('Data -->' + JSON.stringify(d.value));
+    
+    
 
     var message = {
         action: a,
@@ -83,6 +90,12 @@ function getMessage(m) {
 
     //console.log('<-- ' + action);
     //console.log(message);
+    // let note = {
+    //     id:data.id,
+    //     text:data.text
+    // }
+    // textForNotes.append(note);
+    // console.log("array -> " + textForNotes);
 
     switch (action) {
         case 'roomAccept':
@@ -107,6 +120,7 @@ function getMessage(m) {
             //console.log(data);
             drawNewCard(data.id, data.text, data.x, data.y, data.rot, data.colour, data.type, null,
                 null);
+            
             break;
 
         case 'deleteCard':
@@ -124,6 +138,7 @@ function getMessage(m) {
                 $('#' + data.id).children('.change-colour').data('colour',data.colour);
                 $('#' + data.id).children('.card-image').attr("src", 'images/' + data.colour + '-card.png');
             }
+
             break;
 
         case 'initColumns':
@@ -175,7 +190,49 @@ function getMessage(m) {
             break;
     }
 
+    
+}
 
+async function updateArray()
+{ 
+    
+    let sessionBoardId = localStorage.getItem("boardId");
+
+    textForNotes.forEach(async function(value, key) {
+       
+        let currentStatus=404;
+        console.log(value.status);
+        switch (value.status) {
+            case "Not Inserted":
+                currentStatus = await postNote(sessionBoardId,key,value.data);
+                switch (currentStatus) {
+                    case 200:
+                        openAlert()
+                        let note = {
+                            id: key,
+                            data: value.data,
+                            status: noteStatus.I
+                        }
+                        textForNotes.set(key, note);  
+                }
+            break;
+            case "Inserted":
+                currentStatus = await patchNote(sessionBoardId,key,value.data);
+            default:
+        }
+      });      
+
+}
+
+async function deleteNote(cardId) {
+
+    // let sessionBoardId = localStorage.getItem("boardId");
+
+    textForNotes.delete(cardId);
+
+    console.log(localStorage.getItem("boardId"));
+
+    await deleteNote(localStorage.getItem("boardId"), cardId);
 }
 
 function updateText (item, text) {
@@ -190,6 +247,7 @@ $(document).bind('keyup', function(event) {
 });
 
 function drawNewCard(id, text, x, y, rot, colour, type, sticker, animationspeed) {
+    
     //cards[id] = {id: id, text: text, x: x, y: y, rot: rot, colour: colour};
 
     var h = '';
@@ -321,6 +379,7 @@ function drawNewCard(id, text, x, y, rot, colour, type, sticker, animationspeed)
 
     card.children('.delete-card-icon').click(
         function() {
+            deleteNote(id);
             $("#" + id).remove();
             //notify server of delete
             sendAction('deleteCard', {
@@ -349,15 +408,18 @@ function drawNewCard(id, text, x, y, rot, colour, type, sticker, animationspeed)
 }
 
 
-function onCardChange(id, text, c) {
+async function onCardChange(id, text, c) {
     sendAction('editCard', {
         id: id,
         value: text,
         colour: c
     });
+
+    addTextToArray(id,text)
 }
 
 function moveCard(card, position) {
+    console.log(card);
     card.animate({
         left: position.left + "px",
         top: position.top + "px"
@@ -399,7 +461,7 @@ function addSticker(cardId, stickerId) {
 //----------------------------------
 // cards
 //----------------------------------
-function createCard(id, text, x, y, rot, colour, type) {
+async function createCard(id, text, x, y, rot, colour, type) {
     drawNewCard(id, text, x, y, rot, colour, type, null, null);
 
     var action = "createCard";
@@ -416,6 +478,33 @@ function createCard(id, text, x, y, rot, colour, type) {
 
     sendAction(action, data);
 
+}
+
+function addTextToArray(id, text) {
+    let note={};
+    console.log(textForNotes.has(id));
+    if(!textForNotes.has(id))
+    {
+        note = {
+        id: id,
+        data: text,
+        status: noteStatus.NI
+    }
+}
+else
+{
+    note = 
+    {
+        id:id,
+        data:text,
+        status: noteStatus.I
+    }
+}
+    textForNotes.set(note.id, note)
+    textForNotes.forEach(function(value, key) {
+        console.log(key+ ":" + value.data);
+      });
+    
 }
 
 var cardColours = ['yellow', 'green', 'blue', 'white'];
@@ -800,6 +889,23 @@ $(function() {
                 randomCardColour(),
                 "card");
         });
+    
+    $("#create-sticky")
+
+        .click(function() {
+            var rotation = Math.random() * 4 - 2; //add a bit of random rotation (+/- 2deg)
+            uniqueID = Math.round(Math.random() * 99999999); //is this big enough to assure uniqueness?
+           console.log(uniqueID);
+            createCard(
+                'card' + uniqueID,
+                '',
+                58, $('div.board-outline').height(), // hack - not a great way to get the new card coordinates, but most consistant ATM
+                rotation,
+                randomStickyColour(),
+                "sticky");
+        });
+
+
 
     // Style changer
     $("#smallify").click(function() {
@@ -972,7 +1078,7 @@ $(function() {
         autoselect: false, //select content automatically when editing starts
         save: function(content) {
             //here you can save content to your MVC framework's model or send directly to server...
-            //console.log(content);
+            console.log(content);
 
             var action = "editText";
 
@@ -983,6 +1089,8 @@ $(function() {
             
             if (content.target.innerText.length > 0)
                 sendAction(action, data);
+                
+
         },
         validate: function(content) {
             //here you can validate content using RegExp or any other JS code to return false for invalid input
@@ -992,3 +1100,11 @@ $(function() {
 
     
 });
+
+function closeAlert() {
+    document.getElementById('confirmation-prompt').style.display = 'none';
+}
+
+function openAlert() {
+    document.getElementById('confirmation-prompt').style.display = 'block';
+}
