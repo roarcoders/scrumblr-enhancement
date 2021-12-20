@@ -101,26 +101,36 @@ async function postBoardName(boardName) {
     
 }
 
+/**
+ * Get all the board names from the specific URL.
+ *
+ * @async
+ * @function getBoardNames
+ * @returns {Promise<string[] | Error>} returns a promise object with an array of the board names from the fetch request or throws an error
+ */
 async function getBoardNames() {
-  const response = await fetch(url + "boardNames", {
-    method: 'GET',
-    mode: "cors",
-    headers: {
-      "Content-Type": "application/json",
-      "Access-Control-Allow-Origin": "*",
-    },
-  });
-  if(response.ok) {
-    const boardsObject = await response.json();
-    return boardsObject;
-  }
-  // return await fetch(url + "boardNames")
-  // .then((response) => response.json())
-  // .then((json) => {
-  //   return boardNames = json.Items;
-  // });
+  try {
+    const response = await fetch(url + 'boardnames', {
+      method: 'GET',
+      mode: "cors",
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+      },
+    });
+    switch(response.ok) {
+      case true: 
+        const boardsObject = await response.json();
+        // map over the Items Array and access the BoardName property in each board object to get the boardname
+        const boardNamesArray = boardsObject.Items.map(board => board.BoardName);
+        return boardNamesArray
+      case false:
+        throw Error({message: response.statusText})
 
-  // return boardNames;
+    }
+  } catch (error) {
+    console.error(error.message ? error.message : error);
+  }
 }
 
 async function getBoards() {
