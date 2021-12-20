@@ -4,6 +4,8 @@
     <!-- SCRIPTS -->
     <script src="environment.js"></script>
     <script src="still-frontend.js"></script>
+    <script src="script.js"></script>
+
     <link rel="stylesheet" type="text/css" href="css/style.css" />
     <!-- FONTS -->
     <link
@@ -41,6 +43,15 @@
       </table>
     </div>
   </div>
+  <div id="confirmation-prompt" style="display: none;" class="alert">
+    <div class="alert-header">
+      <strong class="mr-auto text-primary">Error</strong>
+      <div><button type="button" class="ml-2 mb-1 close" onclick="closeAlert()">x</button></div>
+    </div>
+    <div class="alert-body">
+      Board already exists, please enter another board name
+    </div>
+</div>
   <div class="stickers">
     <div class="sticker" id="sticker-red"></div>
     <div class="sticker" id="sticker-blue"></div>
@@ -68,6 +79,6 @@
       ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
       var s = document.getElementsByTagName('script')[0];
       s.parentNode.insertBefore(ga, s);
-    })();
+    })();  
     </script>
 </body>
