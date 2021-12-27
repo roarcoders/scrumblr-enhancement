@@ -11,26 +11,12 @@ async function getBoard()
 
 async function go() {
   var value = document.forms[0].elements["name"].value;
-  value = escape(value);
-
-  // console.log('boardNames before -> ' + boardNames);
-  // console.log(boardNames.find(items => {
-  //   return items[0].BoardName == value;
-  // }));
-
-  //getBoard();
-  //getBoards();
-  
-  // boardNames = await getBoardNames();
-  // console.log(typeof boardNames);
-  // console.log("boardName.BoardName JSON Stringify-> ", boardNames.Items);
-  // // const boardNamesKey = Object.keys(boardNames)
-  // // const boardNamesValues = Object.values(boardNames)
-  // //console.log(boardNamesValues);
-  // const items = {"BoardName":value};
-  // console.log(boardNames.Items.find(({ item }) => item === items ));
-
-
+  value = escape(value);  
+  /*
+  * Checking if the entered BoardName already exists
+  **/
+  boardNames = await getBoardNames();
+  boardNames.includes(value) ?  openAlert(): await postBoardName(value);
   //patchBoardName("74171dcb-ee89-496a-828a-1b1c7302f628", "I am a small board")
   // deleteBoard("09e49698-05b6-4457-8271-2a288af9f6f5")
   // getBoardById("69761d59-d7a0-4e84-9a5b-c5119b068f9c");
@@ -38,7 +24,6 @@ async function go() {
   //getBoards();
 
   localStorage.setItem("boardName", value);
-  await postBoardName(value);
   localStorage.setItem("boardId", sessionBoardId.BoardId);
 
   
@@ -101,26 +86,36 @@ async function postBoardName(boardName) {
     
 }
 
+/**
+ * Get all the board names from the specific URL.
+ *
+ * @async
+ * @function getBoardNames
+ * @returns {Promise<string[] | Error>} returns a promise object with an array of the board names from the fetch request or throws an error
+ */
 async function getBoardNames() {
-  const response = await fetch(url + "boardNames", {
-    method: 'GET',
-    mode: "cors",
-    headers: {
-      "Content-Type": "application/json",
-      "Access-Control-Allow-Origin": "*",
-    },
-  });
-  if(response.ok) {
-    const boardsObject = await response.json();
-    return boardsObject;
-  }
-  // return await fetch(url + "boardNames")
-  // .then((response) => response.json())
-  // .then((json) => {
-  //   return boardNames = json.Items;
-  // });
+  try {
+    const response = await fetch(url + 'boardnames', {
+      method: 'GET',
+      mode: "cors",
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+      },
+    });
+    switch(response.ok) {
+      case true: 
+        const boardsObject = await response.json();
+        // map over the Items Array and access the BoardName property in each board object to get the boardname
+        const boardNamesArray = boardsObject.Items.map(board => board.BoardName);
+        return boardNamesArray
+      case false:
+        throw Error({message: response.statusText})
 
-  // return boardNames;
+    }
+  } catch (error) {
+    console.error(error.message ? error.message : error);
+  }
 }
 
 async function getBoards() {
