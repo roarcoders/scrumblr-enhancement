@@ -1,11 +1,11 @@
 let sessionBoardId;
 let url = ENV.URL;
 let boardNames;
+const webSocketURL = 'wss://mo8iouukc7.execute-api.ap-southeast-2.amazonaws.com/prod';
+let webSocket;
 
 async function getBoard()
 {
-  
-  console.log(sessionBoardId);
   return sessionBoardId;
 }
 
@@ -277,3 +277,12 @@ async function patchBoardName(boardId, newName) {
       console.log(JSON.stringify(json));
     });
 }
+
+function onConnect() {
+  webSocket  = new WebSocket(webSocketURL);
+  try {
+  WebSocket.onopen(() => console.log('open status'));
+  } catch (exception){
+    console.log(exception);
+  }
+ }
