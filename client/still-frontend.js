@@ -4,8 +4,9 @@ let boardNames;
 const webSocketURL = 'wss://mo8iouukc7.execute-api.ap-southeast-2.amazonaws.com/prod';
 let webSocket;
 
-async function getBoard()
-{
+onLoad();
+
+async function getBoard() {
   return sessionBoardId;
 }
 
@@ -50,8 +51,6 @@ async function go() {
   //Uncomment or comment when testing
   // console.log(getBoardByName(value));
   console.log(sessionBoardId);
-
-
 }
 
 async function getBoardName(boardId) {
@@ -281,8 +280,18 @@ async function patchBoardName(boardId, newName) {
 function onConnect() {
   webSocket  = new WebSocket(webSocketURL);
   try {
-  WebSocket.onopen(() => console.log('open status'));
-  } catch (exception){
+  WebSocket.onopen = (event) => console.log(event);
+  } catch (exception) {
     console.log(exception);
   }
  }
+
+ function sendMessage() {
+   //TODO
+ }
+
+ function onLoad() {
+  localStorage.getItem("boardName");
+  document.getElementById('confirmation-prompt').style.display = 'none';
+  onConnect();
+}
