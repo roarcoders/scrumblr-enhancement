@@ -1,7 +1,7 @@
 let sessionBoardId;
 let url = ENV.URL;
 let boardNames;
-const webSocketURL = 'wss://mo8iouukc7.execute-api.ap-southeast-2.amazonaws.com/prod';
+const webSocketURL = 'wss://dkarwhjro8.execute-api.ap-southeast-2.amazonaws.com/prod';
 let webSocket;
 
 onLoad();
@@ -278,20 +278,33 @@ async function patchBoardName(boardId, newName) {
 }
 
 function onConnect() {
-  webSocket  = new WebSocket(webSocketURL);
-  try {
-  WebSocket.onopen = (event) => console.log(event);
-  } catch (exception) {
-    console.log(exception);
-  }
- }
+  return new Promise((resolve, reject) => {
+    webSocket = new WebSocket(webSocketURL);
+    webSocket.onopen = (event) => {
+      console.log({ event }, 'websocket open');
+      resolve('open for business');
+    };
+    try {
+    } catch (exception) {
+      console.log(exception);
+    }
+  });
+}
 
- function sendMessage() {
-   //TODO
- }
+function sendMessage() {
+  //TODO
+  webSocket.send(JSON.stringify({ action: 'default' }));
+}
 
- function onLoad() {
-  localStorage.getItem("boardName");
-  document.getElementById('confirmation-prompt').style.display = 'none';
-  onConnect();
+async function onLoad() {
+  localStorage.getItem('boardName');
+  // TODO
+  // document.getElementById('confirmation-prompt').style.display = 'none';
+  const isOpen = await onConnect();
+  console.log(isOpen);
+  sendMessage();
+  webSocket.onmessage = (event) => {
+    const data = JSON.parse(event.data);
+    console.log({ data }, 'received message');
+  };
 }
