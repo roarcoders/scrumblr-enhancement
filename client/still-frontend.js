@@ -305,7 +305,7 @@ function sendMessage() {
   webSocket.send(JSON.stringify({ action: 'default' }));
 }
 
-function loadBoardPage(pathname) {
+function loadBoardPage() {
   const params = new URLSearchParams(location.search);
   const boardname = params.get('boardname');
   if (!boardname) return window.location.replace('/home.html');
