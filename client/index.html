@@ -156,15 +156,4 @@
     <script src="script.js"></script>
     <script src="environment.js"></script>
     <script src="still-frontend.js"></script>
-    <script type="text/javascript">
-    const path = window.location.pathname === '/index.html' ? localStorage.getItem("boardName") : location.pathname;
-    
-    window.history.replaceState(
-        null,
-        null,
-        path
-      );
-      document.getElementById("board-title").innerHTML = localStorage.getItem("boardName");
-      
-    </script>
 </html>
