@@ -186,11 +186,7 @@ async function postNote(boardId, note_id, data) {
     }),
   }).then(res => {
     status = res.status;
-    res.json();
-  }).then(json => {
-    console.log({json});
-    return json;
-  })
+  });
   return status;
 }
 
@@ -423,30 +419,36 @@ function sendMessageToScriptJS(message) {
  * @param {BoardData} boardData
  */
 function initCardsInScriptJS(boardData) {
-  const cardsArray = boardData.Items[0].board_notes.map(formAValidNote);
+  const {board_notes} = boardData.Items[0];
+  populatetextForNotesMap(board_notes);
+  const cardsArray = board_notes.map(formAValidNote);
   sendMessageToScriptJS({ action: 'initCards', data: cardsArray });
 }
+/**
+ * @typedef {{data: string, id: string , status: "Not Inserted" | 'Inserted'}} NewNote
+ * @returns {NewNote[]}
+ */
+function getTextForNoteArray () {
+  return [...textForNotes.values()];
+}
 
-function checkNotesOnSave() {
+function postPatchNotesOnSave() {
   const boardId = getLocalStorage('boardId')
-  /**
-   * @typedef {{data: string, id: string , status: "Not Inserted" | 'Inserted'}} NewNote
-   * @type {NewNote[]}
-   */
-  const notes = Array.from(textForNotes.values());
+  const notes = getTextForNoteArray();
   Promise.allSettled(notes.map(async ({data, id, status }) => {
+    console.log(JSON.stringify({data, id, status}, null, 2))
+    /** @type {NewNote} */
     switch(status) {
       case 'Inserted': {
+        console.log('patch')
         await patchNote(boardId, id, data)
         break;
       }
       case 'Not Inserted': {
         const res = await postNote(boardId,id,data);
-        /**
-         * @type {NewNote}
-         */
+        if(!res === '200') console.error(`fail to insert note ${id}: ${note}`); 
+        /** @type {NewNote} */
         const updatedValue = {data, id, status: 'Inserted'}
-        console.log({res});
         textForNotes.set(id, updatedValue);
         break;
       }
@@ -454,9 +456,23 @@ function checkNotesOnSave() {
   }))
 }
 
+/**
+ * 
+ * @param {Note[]} notesFromDB 
+ */
+ function populatetextForNotesMap (notesFromDB) {
+   notesFromDB.forEach(({note_id, topic, dateCreated}) => { 
+    /**
+     * @type {NewNote}
+     */
+    const value = {data: topic, id: note_id, status: 'Inserted'}
+    textForNotes.set(value.id, value);
+  })
+}
+
 function addEventListenersToBoardPage () {
   const saveNoteBTN = document.getElementById('save-button');
-  saveNoteBTN.addEventListener('click',checkNotesOnSave)
+  saveNoteBTN.addEventListener('click',postPatchNotesOnSave)
 }
 
 /**
