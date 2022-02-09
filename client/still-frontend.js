@@ -445,6 +445,7 @@ function postPatchNotesOnSave() {
         break;
       }
       case 'Not Inserted': {
+        console.log('POST')
         const res = await postNote(boardId,id,data);
         if(!res === '200') return console.error(`fail to insert note ${id}: ${note}`); 
         /** @type {NewNote} */
@@ -472,7 +473,8 @@ function postPatchNotesOnSave() {
 
 function addEventListenersToBoardPage () {
   const saveNoteBTN = document.getElementById('save-button');
-  saveNoteBTN.addEventListener('click',postPatchNotesOnSave)
+  saveNoteBTN.addEventListener('click',postPatchNotesOnSave);
+  
 }
 
 /**
