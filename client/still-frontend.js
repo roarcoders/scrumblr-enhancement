@@ -446,7 +446,7 @@ function postPatchNotesOnSave() {
       }
       case 'Not Inserted': {
         const res = await postNote(boardId,id,data);
-        if(!res === '200') console.error(`fail to insert note ${id}: ${note}`); 
+        if(!res === '200') return console.error(`fail to insert note ${id}: ${note}`); 
         /** @type {NewNote} */
         const updatedValue = {data, id, status: 'Inserted'}
         textForNotes.set(id, updatedValue);
