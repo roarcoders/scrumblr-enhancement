@@ -224,15 +224,15 @@ async function updateArray()
 
 }
 
-async function deleteNote(cardId) {
+async function requestDeleteNote(cardId) {
 
     // let sessionBoardId = localStorage.getItem("boardId");
 
     textForNotes.delete(cardId);
 
-    console.log(localStorage.getItem("boardId"));
-
-    await deleteNote(localStorage.getItem("boardId"), cardId);
+    const boardId = getLocalStorage('boardId')
+    if(!boardId) return console.error('cannot delete card, no boardId in localstorage')
+    await deleteNote(boardId, cardId);
 }
 
 function updateText (item, text) {
@@ -379,7 +379,7 @@ function drawNewCard(id, text, x, y, rot, colour, type, sticker, animationspeed)
 
     card.children('.delete-card-icon').click(
         function() {
-            deleteNote(id);
+            requestDeleteNote(id);
             $("#" + id).remove();
             //notify server of delete
             sendAction('deleteCard', {
