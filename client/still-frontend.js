@@ -477,6 +477,62 @@ function addEventListenersToBoardPage () {
   
 }
 
+function localDevEnv (pathname) {
+  const boardname = getBoardFromQueryString();
+  switch (pathname) {
+    // home.html
+    case '/': {
+      if(!boardname) {
+        location.replace('/home.html');
+        break;
+      }
+    }
+    case '/index.html': {
+      addEventListenersToBoardPage();
+      loadBoardPage();
+      break;
+    }
+    case '/home.html': {
+      // do stuff for home.html
+      history.replaceState(null, null, '/');
+      break;
+    }
+    default: {
+      // redirect
+      location.replace('/');
+    }
+  }
+}
+
+function productionEnv (pathname) {
+  const boardname = getBoardFromQueryString();
+  switch (pathname) {
+    // home.html
+    case '/': {
+      if(!boardname) {
+        location.replace('/home.html');
+        break;
+      }
+      location.replace('/board?' + `boardname=${boardname}`);
+      break;
+    }
+    case '/board': {
+      addEventListenersToBoardPage();
+      loadBoardPage();
+      break;
+    }
+    case '/home.html': {
+      // do stuff for home.html
+      history.replaceState(null, null, '/');
+      break;
+    }
+    default: {
+      // redirect
+      location.replace('/');
+    }
+  }
+}
+
 /**
  * @description loads the board and cards if it exists or redirects to home.html
  *
@@ -495,26 +551,14 @@ async function loadBoardPage() {
 }
 
 async function onLoad() {
-  const { pathname } = window.location;
-  switch (pathname) {
-    // home.html
-    case '/': {
-      location.replace('/home.html');
-      break;
-    }
-    case '/home.html': {
-      // do stuff for home.html
-      history.replaceState(null, null, '/');
-      break;
-    }
-    case '/index.html': {
-      addEventListenersToBoardPage();
-      loadBoardPage(pathname);
+  const { pathname, hostname } = window.location;
+  switch(hostname) {
+    case 'www.scrumblr.roarcoder.dev': {
+      productionEnv(pathname);
       break;
     }
     default: {
-      // redirect
-      location.replace('/');
+      localDevEnv(pathname)
     }
   }
   // TODO
