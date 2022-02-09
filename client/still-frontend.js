@@ -139,10 +139,18 @@ async function getBoards() {
     "ScannedCount": 1
 }
  */
-async function getBoardByName(value) {
+
+/**
+ *
+ * @param {string} boardName
+ * @typedef {{note_id: string, topic: string, dateCreated: number}} Note
+ * @typedef {{Items: {BoardId: string, BoardName: string, board_notes: Note[]}[], Count: number, ScannedCount: number }} BoardData
+ * @returns {Promise<BoardData>}
+ */
+async function getBoardByName(boardName) {
   // alert("this was called");
 
-  const currentBoard = await fetch(url + value, {
+  const currentBoard = await fetch(url + boardName, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -155,10 +163,17 @@ async function getBoardByName(value) {
   return currentBoard;
 }
 
-async function postNote(boardIdtopost, note_Id, value) {
-  let noteName = value;
+
+/**
+ * 
+ * @param {string} boardId the boardId
+ * @param {string} note_id the card or note_id
+ * @param {string} data the card's text
+ * @returns 
+ */
+async function postNote(boardId, note_id, data) {
   let status = 400;
-  await fetch(url + boardIdtopost + '/note/', {
+  await fetch(url + boardId + '/note/', {
     method: 'POST',
     mode: 'cors',
     headers: {
@@ -166,15 +181,16 @@ async function postNote(boardIdtopost, note_Id, value) {
       'Access-Control-Allow-Origin': '*',
     },
     body: JSON.stringify({
-      noteId: note_Id,
-      singleNote: noteName,
+      noteId: note_id || getUUID(),
+      singleNote: data,
     }),
-  }).then((response) => {
-    return response.text().then(function (text) {
-      status = response.status;
-      return text ? JSON.parse(text) : {};
-    });
-  });
+  }).then(res => {
+    status = res.status;
+    res.json();
+  }).then(json => {
+    console.log({json});
+    return json;
+  })
   return status;
 }
 
@@ -305,14 +321,159 @@ function sendMessage() {
   webSocket.send(JSON.stringify({ action: 'default' }));
 }
 
-function loadBoardPage() {
+function getBoardFromQueryString() {
   const params = new URLSearchParams(location.search);
   const boardname = params.get('boardname');
-  if (!boardname) return window.location.replace('/home.html');
-  localStorage.setItem('boardName', boardname);
-  document.getElementById('board-title').innerHTML = localStorage.getItem('boardName');
-  window.history.replaceState(null, null, `?boardname=${boardname}`);
-  getBoardByName(boardname);
+  return boardname;
+}
+
+/**
+ *
+ * @param {'boardName' | 'boardId'} key
+ * @returns {string | null} returns boardName or boardId or null
+ */
+function getLocalStorage(key) {
+  return localStorage.getItem(key);
+}
+
+/**
+ *
+ * @param {'boardName' | 'boardId'} key
+ * @param {string} item
+ */
+function setLocalStorage(key, item) {
+  localStorage.setItem(key, item);
+}
+
+/**
+ *
+ * @param {string} boardName
+ */
+function setBoardNameOnPage(boardName) {
+  document.getElementById('board-title').textContent = boardName;
+}
+
+/**
+ *
+ * @param {string} boardName
+ */
+function addBoardQueryStringToURL(boardName) {
+  window.history.replaceState(null, null, `?boardname=${boardName}`);
+}
+
+/**
+ * @description redirects to /home.html the create a board page
+ */
+function redirectToHome() {
+  window.location.replace('/home.html');
+}
+
+/**
+ * @description generates DOMString containing a randomly generated, 36 character long v4 UUID.
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/Crypto/randomUUID
+ * @returns {DOMString} returns 36 character long v4 UUID as a string
+ */
+function getUUID() {
+  function create_UUID() {
+    var dt = new Date().getTime();
+    var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+      var r = (dt + Math.random() * 16) % 16 | 0;
+      dt = Math.floor(dt / 16);
+      return (c == 'x' ? r : (r & 0x3) | 0x8).toString(16);
+    });
+    return uuid;
+  }
+  return crypto.randomUUID ? crypto.randomUUID() : create_UUID();
+}
+
+/**
+ * @description forms a valid note to draw on the board based on script.js
+ * @typedef {'yellow' | 'green' | 'blue' | 'white'} Colour
+ * @typedef {{id: string, text: string, x: number, y: number, rot: number, colour: Colour, type: 'card' | null, sticker: null, animationspeed: null}} NoteToDraw
+ * @param {Note} note
+ * @param {{colour?: Colour, type?: 'card' | null}} options
+ * @returns {NoteToDraw} returns a valid note to draw with script.js
+ */
+function formAValidNote(note, { colour = 'blue', type = 'card' }) {
+  return {
+    id: note.note_id,
+    text: note.topic,
+    x: '',
+    y: '',
+    rot: '',
+    colour: colour,
+    type: type,
+    sticker: null,
+    animationspeed: null,
+  };
+}
+
+/**
+ * @description uses the getMessage function in script to dispatch an action
+ * @see {@link getMessage} NOTE: add other actions as needed in the future
+ * @typedef {{action: 'initCards', data: NoteToDraw[]}} InitCards
+ * @param {InitCards} message
+ */
+function sendMessageToScriptJS(message) {
+  getMessage(message);
+}
+
+/**
+ *
+ * @param {BoardData} boardData
+ */
+function initCardsInScriptJS(boardData) {
+  const cardsArray = boardData.Items[0].board_notes.map(formAValidNote);
+  sendMessageToScriptJS({ action: 'initCards', data: cardsArray });
+}
+
+function checkNotesOnSave() {
+  const boardId = getLocalStorage('boardId')
+  /**
+   * @typedef {{data: string, id: string , status: "Not Inserted" | 'Inserted'}} NewNote
+   * @type {NewNote[]}
+   */
+  const notes = Array.from(textForNotes.values());
+  Promise.allSettled(notes.map(async ({data, id, status }) => {
+    switch(status) {
+      case 'Inserted': {
+        await patchNote(boardId, id, data)
+        break;
+      }
+      case 'Not Inserted': {
+        const res = await postNote(boardId,id,data);
+        /**
+         * @type {NewNote}
+         */
+        const updatedValue = {data, id, status: 'Inserted'}
+        console.log({res});
+        textForNotes.set(id, updatedValue);
+        break;
+      }
+    }
+  }))
+}
+
+function addEventListenersToBoardPage () {
+  const saveNoteBTN = document.getElementById('save-button');
+  saveNoteBTN.addEventListener('click',checkNotesOnSave)
+}
+
+/**
+ * @description loads the board and cards if it exists or redirects to home.html
+ *
+ */
+async function loadBoardPage() {
+  const boardName = getBoardFromQueryString();
+  if (!boardName) return redirectToHome();
+  setLocalStorage('boardName', boardName);
+  setBoardNameOnPage(boardName);
+  addBoardQueryStringToURL(boardName);
+  const boardData = await getBoardByName(boardName);
+  if (boardData.Items.length === 0) return redirectToHome();
+  const boardId = boardData.Items[0].BoardId;
+  setLocalStorage('boardId', boardId);
+  initCardsInScriptJS(boardData);
 }
 
 async function onLoad() {
@@ -329,6 +490,7 @@ async function onLoad() {
       break;
     }
     case '/index.html': {
+      addEventListenersToBoardPage();
       loadBoardPage(pathname);
       break;
     }
