@@ -1,7 +1,7 @@
 let sessionBoardId;
 let url = ENV.URL;
 let boardNames;
-const webSocketURL = 'wss://dkarwhjro8.execute-api.ap-southeast-2.amazonaws.com/prod';
+const webSocketURL = 'wss://n4f51sq0t1.execute-api.ap-southeast-2.amazonaws.com/prod';
 let webSocket;
 
 onLoad();
