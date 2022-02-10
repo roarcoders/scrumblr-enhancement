@@ -3,6 +3,8 @@ let url = ENV.URL;
 let boardNames;
 const webSocketURL = 'wss://n4f51sq0t1.execute-api.ap-southeast-2.amazonaws.com/prod';
 let webSocket;
+const PROD_HOST = 'www.scrumblr.roarcoder.dev';
+const isProduction = productionEnv === window.location.hostname;
 
 onLoad();
 
@@ -68,7 +70,8 @@ async function postBoardName(boardName) {
     }),
   })
     .then((response) => {
-      window.location.href = `index.html?boardname=${boardName}`;
+      goToBoardURL(boardName)
+      // window.location.href = `index.html?boardname=${boardName}`;
       // middlware_boardid=JSON.stringify(response.JSON());
       response_status = response.status;
       return response.text().then(function (text) {
@@ -364,6 +367,19 @@ function redirectToHome() {
   window.location.replace('/home.html');
 }
 
+
+/**
+ * @description redirects to index.html for the specific board
+ * @param {string} boardname
+ * @param {boolean} redirect if true will use location.replace
+ */
+function goToBoardURL(boardname, redirect = false) {
+  const prodpath = isProduction ? '/board' : '/index.html'
+  const url = `${prodpath}?boardname=${boardname}`
+  if(redirect) location.replace(url);
+  else location.href = url;
+}
+
 /**
  * @description generates DOMString containing a randomly generated, 36 character long v4 UUID.
  * @see https://developer.mozilla.org/en-US/docs/Web/API/Crypto/randomUUID
@@ -553,7 +569,7 @@ async function loadBoardPage() {
 async function onLoad() {
   const { pathname, hostname } = window.location;
   switch(hostname) {
-    case 'www.scrumblr.roarcoder.dev': {
+    case PROD_HOST: {
       productionEnv(pathname);
       break;
     }
