@@ -473,6 +473,14 @@ function postPatchNotesOnSave() {
   }))
 }
 
+function openToastMessage() {
+  document.getElementById('confirmation-prompt').classList.remove('hide');
+}
+
+function closeToastMessage() {
+  document.getElementById('confirmation-prompt').classList.add('hide');
+}
+
 /**
  * 
  * @param {Note[]} notesFromDB 

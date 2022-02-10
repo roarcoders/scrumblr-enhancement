@@ -1102,9 +1102,16 @@ $(function() {
 });
 
 function closeAlert() {
-    document.getElementById('confirmation-prompt').style.display = 'none';
+    const toastMessage = document.getElementById('confirmation-prompt')
+    toastMessage.style.display = 'none';
+    toastMessage.classList.remove('toast-animate')
 }
 
 function openAlert() {
-    document.getElementById('confirmation-prompt').style.display = 'block';
+    const toastMessage = document.getElementById('confirmation-prompt')
+    toastMessage.style.display = 'block';
+    toastMessage.classList.add('toast-animate')
+    const animations = toastMessage.getAnimations();
+    const fadeOut = animations.find(ani => ani.animationName === 'fade-out')
+    fadeOut.onfinish = () => closeAlert();
 }

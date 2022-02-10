@@ -856,3 +856,31 @@ button.close {
 	cursor: pointer;
 	transition: 0.10s;
 }
+
+/* TOAST MESSAGE */
+.hide {
+	display: none;
+}
+
+.toast-animate {
+	--_duration: 3s;
+	--_travel-distance: 0;
+  
+	will-change: transform;
+	animation: 
+	  fade-in .3s ease,
+	  slide-in .3s ease,
+	  fade-out .3s ease var(--_duration);
+}
+
+@keyframes fade-in {
+	from { opacity: 0 }
+}
+  
+@keyframes fade-out {
+	to { opacity: 0 }
+}
+  
+@keyframes slide-in {
+	from { transform: translateY(var(--_travel-distance, 10px)) }
+}
