@@ -320,6 +320,10 @@ function sendMessage() {
   webSocket.send(JSON.stringify({ action: 'default' }));
 }
 
+/**
+ * @example ?boardname=testboard -> testboard
+ * @returns {string} boardname from the query param
+ */
 function getBoardFromQueryString() {
   const params = new URLSearchParams(location.search);
   const boardname = params.get('boardname');
