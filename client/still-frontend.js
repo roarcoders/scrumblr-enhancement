@@ -2,6 +2,7 @@ let sessionBoardId;
 let url = ENV.URL;
 let boardNames;
 const webSocketURL = 'wss://n4f51sq0t1.execute-api.ap-southeast-2.amazonaws.com/prod';
+/**@type {WebSocket} */
 let webSocket;
 const PROD_HOST = 'www.scrumblr.roarcoder.dev';
 const isProduction = PROD_HOST === window.location.hostname;
@@ -84,7 +85,6 @@ async function postBoardName(boardName) {
 
 /**
  * Get all the board names from the specific URL.
- *
  * @async
  * @function getBoardNames
  * @returns {Promise<string[] | Error>} returns a promise object with an array of the board names from the fetch request or throws an error
@@ -122,26 +122,6 @@ async function getBoards() {
     return boardsObject;
   }
 }
-
-/**
- * {
-    "Items": [
-        {
-            "BoardId": "f992080c-e2b1-4959-a617-267b3686497f",
-            "BoardName": "testboard",
-            "board_notes": [
-                {
-                    "note_id": "card94455729",
-                    "topic": "dsadsaa",
-                    "dateCreated": 1644231343818
-                }
-            ]
-        }
-    ],
-    "Count": 1,
-    "ScannedCount": 1
-}
- */
 
 /**
  *
@@ -301,23 +281,22 @@ async function patchBoardName(boardId, newName) {
     });
 }
 
-function onConnect() {
+/**
+ * @description connect to the websocket
+ * @returns {Promise<'open' | 'error'>}
+ */
+ function onConnect() {
   return new Promise((resolve, reject) => {
     webSocket = new WebSocket(webSocketURL);
     webSocket.onopen = (event) => {
-      console.log({ event }, 'websocket open');
-      resolve('open for business');
-    };
-    try {
-    } catch (exception) {
-      console.log(exception);
+      resolve('open');
+    }
+    webSocket.onerror = (event) => {
+      console.error('websocket error', event)
+      webSocket.onerror = null;
+      reject('error');
     }
   });
-}
-
-function sendMessage() {
-  //TODO
-  webSocket.send(JSON.stringify({ action: 'default' }));
 }
 
 /**
@@ -371,7 +350,6 @@ function redirectToHome() {
   window.location.replace('/home.html');
 }
 
-
 /**
  * @description redirects to index.html for the specific board
  * @param {string} boardname
@@ -410,7 +388,7 @@ function getUUID() {
  * @param {{colour?: Colour, type?: 'card' | null}} options
  * @returns {NoteToDraw} returns a valid note to draw with script.js
  */
-function formAValidNote(note, { colour = 'blue', type = 'card' }) {
+function formAValidNote(note, { colour = randomCardColour(), type = 'card' }) {
   return {
     id: note.note_id,
     text: note.topic,
@@ -425,13 +403,17 @@ function formAValidNote(note, { colour = 'blue', type = 'card' }) {
 }
 
 /**
- * @description uses the getMessage function in script to dispatch an action
- * @see {@link getMessage} NOTE: add other actions as needed in the future
- * @typedef {{action: 'initCards', data: NoteToDraw[]}} InitCards
- * @param {InitCards} message
+ * @typedef {'default'} Action
+ * @typedef {EditNote | DeleteNote} MessageType
+ * @see {@link getMessage}
  */
-function sendMessageToScriptJS(message) {
-  getMessage(message);
+
+/**
+ * sends a websocket message to AWS API Gateway
+ * @param {{action: Action, message: MessageType }} dispatch
+ */
+function dispatchWebSocketMessage(dispatch = {action: 'default', message: ''}) {
+    webSocket.send(JSON.stringify(dispatch));
 }
 
 /**
@@ -442,7 +424,7 @@ function initCardsInScriptJS(boardData) {
   const {board_notes} = boardData.Items[0];
   populatetextForNotesMap(board_notes);
   const cardsArray = board_notes.map(formAValidNote);
-  sendMessageToScriptJS({ action: 'initCards', data: cardsArray });
+  getMessage({ action: 'initCards', data: cardsArray });
 }
 /**
  * @typedef {{data: string, id: string , status: "Not Inserted" | 'Inserted'}} NewNote
@@ -502,7 +484,48 @@ function closeToastMessage() {
 function addEventListenersToBoardPage () {
   const saveNoteBTN = document.getElementById('save-button');
   saveNoteBTN.addEventListener('click',postPatchNotesOnSave);
+}
+
+/**
+* start aws websocket connection and receive messages here
+*/
+async function initWebSocket() {
+  const isOpen = await onConnect();
+  console.log({isOpen}, 'websocket is open');
   
+  if(isOpen === 'error') return;
+
+  webSocket.onmessage = (event) => {
+    /**@type MessageType */
+    const data = JSON.parse(event.data);
+    console.log({ data }, 'received message');
+    getMessage(data);
+  };
+}
+
+/**
+ * @description loads the board and cards if it exists or redirects to home.html
+ *
+ */
+async function loadBoardPage() {
+  const boardName = getBoardFromQueryString();
+  if (!boardName) return redirectToHome();
+
+  setLocalStorage('boardName', boardName);
+
+  setBoardNameOnPage(boardName);
+
+  addBoardQueryStringToURL(boardName);
+
+  const boardData = await getBoardByName(boardName);
+  if (boardData.Items.length === 0) return redirectToHome();
+
+  const boardId = boardData.Items[0].BoardId;
+  setLocalStorage('boardId', boardId);
+
+  initCardsInScriptJS(boardData);
+
+  initWebSocket();
 }
 
 function localDevEnv (pathname) {
@@ -561,23 +584,6 @@ function productionEnv (pathname) {
   }
 }
 
-/**
- * @description loads the board and cards if it exists or redirects to home.html
- *
- */
-async function loadBoardPage() {
-  const boardName = getBoardFromQueryString();
-  if (!boardName) return redirectToHome();
-  setLocalStorage('boardName', boardName);
-  setBoardNameOnPage(boardName);
-  addBoardQueryStringToURL(boardName);
-  const boardData = await getBoardByName(boardName);
-  if (boardData.Items.length === 0) return redirectToHome();
-  const boardId = boardData.Items[0].BoardId;
-  setLocalStorage('boardId', boardId);
-  initCardsInScriptJS(boardData);
-}
-
 async function onLoad() {
   const { pathname, hostname } = window.location;
   switch(hostname) {
@@ -591,11 +597,4 @@ async function onLoad() {
   }
   // TODO
   // document.getElementById('confirmation-prompt').style.display = 'none';
-  const isOpen = await onConnect();
-  console.log(isOpen);
-  sendMessage();
-  webSocket.onmessage = (event) => {
-    const data = JSON.parse(event.data);
-    console.log({ data }, 'received message');
-  };
 }
