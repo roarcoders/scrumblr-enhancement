@@ -15,12 +15,9 @@ async function getBoard() {
 
 /**
  * checks if board name is unique, sets local storage, navigates to new board
+ * @param {string} boardName name of board to create
  */
-async function createNewBoard() {
-  /**@type {string} */
-  let boardName = document.forms[0].elements['name'].value;
-  console.log({boardName})
-  boardName = escape(boardName);
+async function createNewBoard(boardName) {
   /*
    * Checking if the entered BoardName already exists
    **/
@@ -472,6 +469,16 @@ function addEventListenersToBoardPage () {
   saveNoteBTN.addEventListener('click',postPatchNotesOnSave);
 }
 
+function addEventListenerToHomePage () {
+  document.querySelector('form[name=createBoard]').addEventListener('submit', (event) => {
+    event.preventDefault();
+    /**@type {HTMLFormElement} */
+    const form = event.target;
+    const boardName = new FormData(form).get('boardname');
+    createNewBoard(boardName)
+  })
+}
+
 /**
 * start aws websocket connection and receive messages here
 */
@@ -532,6 +539,7 @@ function localDevEnv (pathname) {
     case '/home.html': {
       // do stuff for home.html
       history.replaceState(null, null, '/');
+      addEventListenerToHomePage()
       break;
     }
     default: {
@@ -561,6 +569,7 @@ function productionEnv (pathname) {
     case '/home.html': {
       // do stuff for home.html
       history.replaceState(null, null, '/');
+      addEventListenerToHomePage()
       break;
     }
     default: {
