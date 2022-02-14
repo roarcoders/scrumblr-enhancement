@@ -88,6 +88,12 @@ function blockUI(message) {
  */
 
 /**
+ * @typedef {Object} InitCards
+ * @property {'createCard'} action
+ * @property {NoteToDraw} data
+ */
+
+/**
  * @typedef {Object} EditNote
  * @property {'editCard'} action
  * @property {CardData} data
@@ -521,7 +527,7 @@ async function createCard(id, text, x, y, rot, colour, type) {
     };
 
     sendAction(action, data);
-
+    dispatchWebSocketMessage({action: 'default', message: {action, data}})
 }
 
 function addTextToArray(id, text) {
