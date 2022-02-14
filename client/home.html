@@ -3,7 +3,7 @@
   <head>
     <!-- SCRIPTS -->
     <script src="environment.js"></script>
-    <script src="still-frontend.js"></script>
+    <script defer src="still-frontend.js"></script>
     <script src="script.js"></script>
 
     <link rel="stylesheet" type="text/css" href="css/style.css" />
@@ -31,9 +31,10 @@
         <tr>
           <td>
             <h1 class="home">scrumblr.</h1>
-            <form class="home" onsubmit="return go();">
-              <label>name your new board:</label><br>
-              <input class="text" type="text" name="name"><a id="go" onclick="return go();">&nbsp;go.</a>
+            <form name="createBoard" class="home">
+              <label for="boardname">name your new board:</label><br>
+              <input class="text" type="text" name="boardname" placeholder="board name">
+              <button id="go" type="submit">&nbsp;go.</button>
             </form><br><br>
             <p class="home">example board:</p>
             <p class="home"><a href="https://www.scrumblr.roarcoder.dev/board?boardname=testboard">board/testboard</a></p><br><br><br>
