@@ -1,5 +1,5 @@
 let sessionBoardId;
-let url = ENV.URL;
+let url = ENV?.URL;
 let boardNames;
 const webSocketURL = 'wss://n4f51sq0t1.execute-api.ap-southeast-2.amazonaws.com/prod';
 /**@type {WebSocket} */
@@ -346,6 +346,17 @@ function goToBoardURL(boardname, redirect = false) {
 }
 
 /**
+ * @description navigates to /home.html for local dev or path "/" on production
+ * @param {boolean} redirect if true will use location.replace
+ */
+function goToHome(redirect = false) {
+  const prodpath = isProduction ? '/' : '/home.html'
+  const url = `${prodpath}`
+  if(redirect) location.replace(url);
+  else location.href = url;
+}
+
+/**
  * @description generates DOMString containing a randomly generated, 36 character long v4 UUID.
  * @see https://developer.mozilla.org/en-US/docs/Web/API/Crypto/randomUUID
  * @returns {DOMString} returns 36 character long v4 UUID as a string
@@ -524,10 +535,10 @@ async function loadBoardPage() {
 function localDevEnv (pathname) {
   const boardname = getBoardFromQueryString();
   switch (pathname) {
-    // home.html
     case '/': {
       if(!boardname) {
-        location.replace('/home.html');
+        // home.html
+        goToHome(true)
         break;
       }
     }
@@ -544,7 +555,7 @@ function localDevEnv (pathname) {
     }
     default: {
       // redirect
-      location.replace('/');
+      goToHome(true)
     }
   }
 }
@@ -552,13 +563,13 @@ function localDevEnv (pathname) {
 function productionEnv (pathname) {
   const boardname = getBoardFromQueryString();
   switch (pathname) {
-    // home.html
     case '/': {
+      // home.html
       if(!boardname) {
-        location.replace('/home.html');
+        addEventListenerToHomePage();
         break;
       }
-      location.replace('/board?' + `boardname=${boardname}`);
+      else goToBoardURL(boardname);
       break;
     }
     case '/board': {
@@ -569,12 +580,12 @@ function productionEnv (pathname) {
     case '/home.html': {
       // do stuff for home.html
       history.replaceState(null, null, '/');
-      addEventListenerToHomePage()
+      addEventListenerToHomePage();
       break;
     }
     default: {
       // redirect
-      location.replace('/');
+      goToHome(true);
     }
   }
 }
