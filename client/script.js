@@ -1,5 +1,3 @@
-//const e = require("cors");
-
 var cards = {};
 var totalcolumns = 0;
 var columns = [];
@@ -82,7 +80,37 @@ function blockUI(message) {
 }
 ------removing socketIO references----------(Jason)*/
 
-//respond to an action event
+/**
+ * @typedef {{id: string}} CardId
+ * @typedef {{value: string}} CardValue
+ * @typedef {{colour: Colour}} CardColour
+ * @typedef {CardId & CardValue & CardColour} CardData 
+ */
+
+/**
+ * @typedef {Object} EditNote
+ * @property {'editCard'} action
+ * @property {CardData} data
+ */
+
+/**
+ * @typedef {Object} DeleteNote
+ * @property {'deleteCard'} action
+ * @property {CardId} data
+ */
+
+/**
+ * @typedef {Object} InitCards
+ * @property {'initCards'} action
+ * @property {NoteToDraw[]} data
+ */
+
+/**
+ * respond to an action event 
+ * @description dispatchs various actions like 'createCard', 'editCard' or 'deleteCard' card 
+ * @typedef {EditNote | DeleteNote | InitCards} M 
+ * @param {M} m
+ */
 function getMessage(m) {
     var message = m; //JSON.parse(m);
     var action = message.action;
@@ -385,6 +413,9 @@ function drawNewCard(id, text, x, y, rot, colour, type, sticker, animationspeed)
             sendAction('deleteCard', {
                 'id': id
             });
+            /**@type DeleteNote */
+            const message = { action: 'deleteCard', data: { id } }
+            dispatchWebSocketMessage({action: 'default', message});
         }
     );
 
@@ -399,6 +430,19 @@ function drawNewCard(id, text, x, y, rot, colour, type, sticker, animationspeed)
         saveDelay: 600,
         save: function(content) {
             onCardChange(id, content.target.innerText, null);
+        },
+        /**@see {@link [end method](https://github.com/agrinko/jquery-contenteditable#end-void)} */
+        end: function(event) {
+            /**@type EditNote */
+            const message = { 
+                action: 'editCard', 
+                data: { 
+                    id, 
+                    value: event.target.textContent, 
+                    colour: '' 
+                } 
+            }
+            dispatchWebSocketMessage({action: 'default', message})
         }
     });
 
@@ -564,7 +608,7 @@ function initCards(cardArray) {
     }
 
     boardInitialized = true;
-    unblockUI();
+    // unblockUI();
 }
 
 
