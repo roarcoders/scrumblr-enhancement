@@ -404,7 +404,7 @@ function formAValidNote(note, { colour = randomCardColour(), type = 'card' }) {
 
 /**
  * @typedef {'default'} Action
- * @typedef {EditNote | DeleteNote} MessageType
+ * @typedef {M} MessageType
  * @see {@link getMessage}
  */
 
@@ -412,7 +412,7 @@ function formAValidNote(note, { colour = randomCardColour(), type = 'card' }) {
  * sends a websocket message to AWS API Gateway
  * @param {{action: Action, message: MessageType }} dispatch
  */
-function dispatchWebSocketMessage(dispatch = {action: 'default', message: ''}) {
+function dispatchWebSocketMessage(dispatch = {action: 'default', message: {}}) {
     webSocket.send(JSON.stringify(dispatch));
 }
 
