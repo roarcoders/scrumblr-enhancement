@@ -1,6 +1,6 @@
 let sessionBoardId;
-let url = ENV?.URL;
-if(!url) console.warn('ENV URL IS MISSING!')
+// let url = 'http://localhost:3000/board/'
+let url = 'https://37run05fad.execute-api.ap-southeast-2.amazonaws.com/prod/board/';
 let boardNames;
 const webSocketURL = 'wss://n4f51sq0t1.execute-api.ap-southeast-2.amazonaws.com/prod';
 /**@type {WebSocket} */
@@ -110,7 +110,7 @@ async function getBoards() {
 /**
  *
  * @param {string} boardName
- * @typedef {{note_id: string, topic: string, dateCreated: number}} Note
+ * @typedef {{ note_id: string, topic: string, colour: Colour, position: NotePosition, dateCreated: number }} Note
  * @typedef {{Items: {BoardId: string, BoardName: string, board_notes: Note[]}[], Count: number, ScannedCount: number }} BoardData
  * @returns {Promise<BoardData>}
  */
@@ -135,12 +135,12 @@ async function getBoardByName(boardName) {
  * 
  * @param {string} boardId the boardId
  * @param {string} note_id the card or note_id
- * @param {string} data the card's text
+ * @param {NoteData} data the card's text
  * @returns 
  */
 async function postNote(boardId, note_id, data) {
   let status = 400;
-  await fetch(url + boardId + '/note/', {
+  return await fetch(url + boardId + '/note/', {
     method: 'POST',
     mode: 'cors',
     headers: {
@@ -152,9 +152,8 @@ async function postNote(boardId, note_id, data) {
       singleNote: data,
     }),
   }).then(res => {
-    status = res.status;
+    return status = res.status;
   });
-  return status;
 }
 
 async function getBoardById(boardIdtoGet) {
@@ -379,21 +378,29 @@ function getUUID() {
  * @description forms a valid note to draw on the board based on script.js
  * @typedef {'yellow' | 'green' | 'blue' | 'white'} Colour
  * @typedef {{id: string, text: string, x: number, y: number, rot: number, colour: Colour, type: 'card' | null, sticker: null, animationspeed: null}} NoteToDraw
- * @param {Note} note
- * @param {{colour?: Colour, type?: 'card' | null}} options
+ * @param {Object} note
+ * @param {string} note.id
+ * @param {string} note.text
+ * @param {number} [note.x]
+ * @param {number} [note.y]
+ * @param {number} [note.rot]
+ * @param {Colour} [note.colour]
+ * @param {'card' | null} [note.type]
+ * @param {null} [note.sticker] 
+ * @param {null} [note.animationspeed] 
  * @returns {NoteToDraw} returns a valid note to draw with script.js
  */
-function formAValidNote(note, { colour = randomCardColour(), type = 'card' }) {
+function formAValidNote({id, text, x = 0, y = 0, rot = 0, colour = '' , type = 'card', sticker = null, animationspeed = null}) {
   return {
-    id: note.note_id,
-    text: note.topic,
-    x: '',
-    y: '',
-    rot: '',
-    colour: colour,
+    id: id,
+    text: text,
+    x: x,
+    y: y,
+    rot: rot,
+    colour: colour || randomCardColour(),
     type: type,
-    sticker: null,
-    animationspeed: null,
+    sticker: sticker,
+    animationspeed: animationspeed,
   };
 }
 
@@ -416,42 +423,100 @@ function dispatchWebSocketMessage(dispatch = {action: 'default', message: {}}) {
  * @param {BoardData} boardData
  */
 function initCardsInScriptJS(boardData) {
-  const {board_notes} = boardData.Items[0];
-  populatetextForNotesMap(board_notes);
-  const cardsArray = board_notes.map(formAValidNote);
+  const { board_notes } = boardData.Items[0];
+
+  populateBoardNotesMap(board_notes);
+
+  const boardNotes = getBoardNotesArray();
+
+  const cardsArray = boardNotes.map((
+    { id, data: { colour, position: { left, top }, text }}
+    ) => formAValidNote({ id, text, colour, x: left, y: top }));
+
   getMessage({ action: 'initCards', data: cardsArray });
 }
 /**
- * @typedef {{data: string, id: string , status: "Not Inserted" | 'Inserted'}} NewNote
- * @returns {NewNote[]}
+ * @typedef {{top: number, left: number}} NotePosition
+ * @typedef {{ text: string, position: NotePosition, colour: Colour }} NoteData
+ * @typedef {{data: NoteData, id: string , status: "Not Inserted" | 'Inserted'}} BoardNote
+ * @returns {BoardNote[]} an array of the board notes from the boardNotesMap
  */
-function getTextForNoteArray () {
-  return [...textForNotes.values()];
+function getBoardNotesArray () {
+  return [...boardNotesMap.values()];
 }
 
-function postPatchNotesOnSave() {
-  const boardId = getLocalStorage('boardId')
-  const notes = getTextForNoteArray();
-  Promise.allSettled(notes.map(async ({data, id, status }) => {
+/**
+ * 
+ */
+async function postPatchNotesOnSave() {
+  const boardId = getLocalStorage('boardId');
+  const notes = getBoardNotesArray();
+
+  for await (const {data, id, status} of notes) {
     console.log(JSON.stringify({data, id, status}, null, 2))
-    /** @type {NewNote} */
+    const failureMsg = () => console.error(`fail to insert note ${id}: ${note}`)
     switch(status) {
       case 'Inserted': {
         console.log('patch')
-        await patchNote(boardId, id, data)
+        const res = await patchNote(boardId, id, data).catch(err => console.error(err))
+        if(!res === 200) failureMsg()
         break;
       }
       case 'Not Inserted': {
         console.log('POST')
-        const res = await postNote(boardId,id,data);
-        if(!res === '200') return console.error(`fail to insert note ${id}: ${note}`); 
-        /** @type {NewNote} */
+        const res = await postNote(boardId, id, data).catch(err => console.error(err))
+        
+        if(!res === 200) {
+          failureMsg() 
+          break
+        } 
+          
+        
+        /** @type {BoardNote} */
         const updatedValue = {data, id, status: 'Inserted'}
-        textForNotes.set(id, updatedValue);
+        boardNotesMap.set(id, updatedValue);
         break;
       }
     }
-  }))
+  }
+  /**
+   * @zainafzal88
+   * @toreylittlefield
+   * Writes Data To DynamoDB TOO FAST! Not Strongly Consistent
+   * @todo need to discuss options of using only one post request to update the whole note array at once! 
+   * */
+  // const result = await Promise.allSettled(
+  //   notes.map(async ({data, id, status }) => {
+
+  //   console.log(JSON.stringify({data, id, status}, null, 2))
+  //   const failureMsg = () => console.error(`fail to insert note ${id}: ${note}`)
+  //   switch(status) {
+  //     case 'Inserted': {
+  //       console.log('patch')
+  //       const res = await patchNote(boardId, id, data).catch(err => console.error(err))
+  //       if(!res === 200) failureMsg()
+  //       return res;
+  //     }
+  //     case 'Not Inserted': {
+  //       console.log('POST')
+  //       const res = await postNote(boardId, id, data).catch(err => console.error(err))
+        
+  //       if(!res === 200) {
+  //         failureMsg() 
+  //         return res;
+  //       } 
+          
+        
+  //       /** @type {BoardNote} */
+  //       const updatedValue = {data, id, status: 'Inserted'}
+  //       boardNotesMap.set(id, updatedValue);
+  //       return res;
+  //     }
+  //   }
+  // })
+  // )
+  // console.log(result)
+  /** Writes Data To DynamoDB TOO FAST! */
 }
 
 function openToastMessage() {
@@ -466,19 +531,24 @@ function closeToastMessage() {
  * 
  * @param {Note[]} notesFromDB 
  */
- function populatetextForNotesMap (notesFromDB) {
-   notesFromDB.forEach(({note_id, topic, dateCreated}) => { 
-    /**
-     * @type {NewNote}
-     */
-    const value = {data: topic, id: note_id, status: 'Inserted'}
-    textForNotes.set(value.id, value);
+ function populateBoardNotesMap(notesFromDB) {
+   notesFromDB.forEach(({note_id, topic, colour = '', position = {top: 0, left: 0}, dateCreated}) => { 
+     if(topic.text) {
+      /** @type {NoteData} */
+      const {colour, position, text}  = topic
+      const value = { data: { text, colour, position }, id: note_id, status: 'Inserted'}
+      boardNotesMap.set(value.id, value);
+      return;
+     }
+    /** @type {BoardNote} */
+    const value = { data: { text: topic, colour, position }, id: note_id, status: 'Inserted'}
+    boardNotesMap.set(value.id, value);
   })
 }
 
 function addEventListenersToBoardPage () {
   const saveNoteBTN = document.getElementById('save-button');
-  saveNoteBTN.addEventListener('click',postPatchNotesOnSave);
+  saveNoteBTN.addEventListener('click', postPatchNotesOnSave);
 }
 
 function addEventListenerToHomePage () {
