@@ -98,13 +98,18 @@ async function getBoardNames() {
 }
 
 async function getBoards() {
-  let boards = await fetch(url).then((response) => response.text());
-  // .then((json) => {
-  //   console.log(JSON.stringify(json));
-  if (response.ok) {
-    const boardsObject = await response.json();
-    return boardsObject;
-  }
+  try {
+    const response = await fetch(url);
+      if (response.ok) {
+        const boardsObject = await response.json();
+        return boardsObject;
+      }
+      const {status, statusText} = response;
+      throw Error(`${status}, ${statusText}`);
+    } catch (error) {
+      console.error(error, 'error fetching boards');
+      return [];
+    }
 }
 
 /**
