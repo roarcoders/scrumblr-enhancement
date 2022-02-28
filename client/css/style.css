@@ -884,3 +884,46 @@ button.close {
 @keyframes slide-in {
 	from { transform: translateY(var(--_travel-distance, 10px)) }
 }
+
+form {
+	display: flex;
+	justify-content: center;
+	margin-bottom: 9%;
+}
+
+input {
+	margin: 0 0.5rem;
+	padding: 0.5rem;
+	border: 1px solid #333;
+	width: 35px;
+	height: 35px;
+	text-align: center;
+	font-size: 3rem;
+}
+
+.special {
+	margin-top: 2rem;
+	font-size: 1.5rem;
+	opacity: 1;
+	visibility: visible;
+	transition: all 0.3s ease;
+	text-align: center;
+    margin-bottom: 15px;
+}
+}
+
+.special i {
+	font-size: 1rem;
+	cursor: pointer;
+}
+
+.passcode-ui {
+	width: 40%;
+	margin: 0 auto;
+    margin-top: -4%;
+	background-color: rgba(255,255,255,0.85);
+	padding: 0.05rem 0.20rem;
+	border-radius: 8px;
+	border-bottom: 1px solid rgba(0,0,0,0.5);
+}
+
