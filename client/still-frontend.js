@@ -17,14 +17,15 @@ async function getBoard() {
 /**
  * checks if board name is unique, sets local storage, navigates to new board
  * @param {string} boardName name of board to create
+ * @param {string} passCode alphanumeric length 4
  */
-async function createNewBoard(boardName) {
+async function createNewBoard(boardName, passCode) {
   /*
    * Checking if the entered BoardName already exists
    **/
   boardNames = await getBoardNames();
-  if(boardNames.includes(boardName)) return openAlert() 
-  sessionBoardId = await postBoardName(boardName);
+  if(boardNames.includes(boardName)) return openAlert(); 
+  sessionBoardId = await postBoardName(boardName, passCode);
 
   setLocalStorage('boardName',boardName);
   setLocalStorage('boardId', sessionBoardId.BoardId)
@@ -46,9 +47,11 @@ async function getBoardName(boardId) {
  * creates a board in dyanamodb from the boardName
  * @async
  * @param {string} boardName 
+ * @param {string} passCode 
  * @returns {Promise<string>} the board id for the newly created board
  */
-async function postBoardName(boardName) {
+async function postBoardName(boardName, passCode) {
+  try {
   const response = await fetch(url, {
     method: 'POST',
     mode: 'cors',
@@ -58,13 +61,18 @@ async function postBoardName(boardName) {
     },
     body: JSON.stringify({
       BoardName: boardName,
+      Passcode: passCode
     }),
-  }).catch(err => console.error(err.message));
+  });
   if(response.ok) {
     const json = await response.json();
     return json;
   };
+  throw Error(response.statusText)
+} catch (error) {
+  console.error(error)
   return '';
+}
 }
 
 /**
@@ -562,8 +570,47 @@ function addEventListenerToHomePage () {
     event.preventDefault();
     /**@type {HTMLFormElement} */
     const form = event.target;
-    const boardName = new FormData(form).get('boardname');
-    createNewBoard(boardName)
+    const formData = new FormData(form);
+    
+    function getValidPassword(form) {
+      let passCode = ''
+      form.forEach((value, key) => {
+        if(key.startsWith('code-')) {
+          passCode += value
+        };
+      })
+    }
+    const passCode = getValidPassword();
+    if(passCode.length !== 4) {
+      console.warn('passcode is not of length 4');
+      return;
+    }
+
+    const boardName = formData.get('boardname');
+    createNewBoard(boardName, passCode)
+  });
+  // for the passcode / password form section
+  const inputs = [...document.querySelectorAll('form .passcode-ui input')];
+  document.querySelector('form .passcode-ui').addEventListener('keyup', (event) => {
+    const element = event.target;
+    const name = element.name;
+
+    if(event.type === 'keyup' && element instanceof HTMLInputElement) {
+
+      const indexEl = inputs.findIndex(element => element.name === name)
+      if(indexEl === -1) return;
+      
+      const nextInput = inputs[indexEl + 1];
+      const prevInput = inputs[indexEl - 1]
+
+
+      // move to next pin code input or go back to previous pin code input
+      if(element.value.length === parseInt(element.getAttribute('maxlength'), 10) && nextInput) {
+        nextInput.focus();
+      } else if(!element.value.length && prevInput) {
+        prevInput.focus();
+      }
+    }
   })
 }
 
