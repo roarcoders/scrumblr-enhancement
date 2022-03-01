@@ -891,6 +891,13 @@ form {
 	margin-bottom: 9%;
 }
 
+.create-board-form {
+	display: flex;
+	justify-content: center;
+	flex-direction: column;
+	gap: 10px;
+}
+
 input {
 	margin: 0 0.5rem;
 	padding: 0.5rem;
@@ -899,6 +906,10 @@ input {
 	height: 35px;
 	text-align: center;
 	font-size: 3rem;
+}
+
+.board-name {
+	flex-basis: 100%;
 }
 
 .special {
@@ -910,7 +921,6 @@ input {
 	text-align: center;
     margin-bottom: 15px;
 }
-}
 
 .special i {
 	font-size: 1rem;
@@ -918,12 +928,22 @@ input {
 }
 
 .passcode-ui {
-	width: 40%;
-	margin: 0 auto;
-    margin-top: -4%;
+	flex-basis: 100%;
+	margin: 0.6rem auto;
 	background-color: rgba(255,255,255,0.85);
 	padding: 0.05rem 0.20rem;
 	border-radius: 8px;
 	border-bottom: 1px solid rgba(0,0,0,0.5);
 }
+
+.passcode-ui label {
+	font-size: 1.75rem;
+}
+
+.passcode-ui input {
+	font-size: 1.5rem;
+	width: 20px;
+	height: 20px;
+}
+
 
