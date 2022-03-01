@@ -1,25 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <!-- SCRIPTS -->
-    <script src="environment.js"></script>
-    <script defer src="still-frontend.js"></script>
-    <script src="script.js"></script>
 
-    <link rel="stylesheet" type="text/css" href="css/style.css" />
-    <!-- FONTS -->
-    <link
-      href="http://fonts.googleapis.com/css?family=Rock+Salt"
-      rel="stylesheet"
-      type="text/css"
-    />
-    <link
-      href="http://fonts.googleapis.com/css?family=Covered+By+Your+Grace"
-      rel="stylesheet"
-      type="text/css"
-    />
-    <title>scrumblr</title>
-  </head>
+<head>
+  <!-- SCRIPTS -->
+  <script src="environment.js"></script>
+  <script defer src="still-frontend.js"></script>
+  <script src="script.js"></script>
+
+  <link rel="stylesheet" type="text/css" href="css/style.css" />
+  <!-- FONTS -->
+  <link href="http://fonts.googleapis.com/css?family=Rock+Salt" rel="stylesheet" type="text/css" />
+  <link href="http://fonts.googleapis.com/css?family=Covered+By+Your+Grace" rel="stylesheet" type="text/css" />
+  <title>scrumblr</title>
+</head>
+
 </html>
 
 <body>
@@ -31,25 +25,37 @@
         <tr>
           <td>
             <h1 class="home">scrumblr.</h1>
-            <form name="createBoard" class="home">
-              <label for="boardname">name your new board:</label><br>
-              <input class="text" type="text" name="boardname" placeholder="board name">
-              <button id="go" type="submit">&nbsp;go.</button>
-            </form><br><br>
-            <div class="passcode-ui" >
-              <div id="code-block" class="special hidden">
-                Enter a passcode<span id="code"></span>:
-                <br />
+            <form name="createBoard" class="home create-board-form">
+              <div class="board-name">
+                <label for="boardname">name your new board:</label><br>
+                <input class="text" autofocus required minlength="1" type="text" name="boardname"
+                  placeholder="board name">
+                <button id="go" type="submit">&nbsp;go.</button>
               </div>
-              <form>
-                <input maxlength="1" />
-                <input maxlength="1" />
-                <input maxlength="1" />
-                <input maxlength="1" />
-              </form>
-            </div>
+              <div class="passcode-ui">
+                <div id="code-block" class="special hidden">
+                  <h3>Enter a passcode:</h3>
+                  <span id="code"></span>
+                  <br />
+
+                  <label for="code-one" aria-label="First Digit"></label>
+                  <input type="password" autocomplete="current-password new-password" name="code-one" required
+                    minlength="1" maxlength="1" />
+                  <label for="code-two" aria-label="Second Digit"></label>
+                  <input type="password" autocomplete="current-password new-password" name="code-two" required
+                    minlength="1" maxlength="1" />
+                  <label for="code-three" aria-label="Third Digit"></label>
+                  <input type="password" autocomplete="current-password new-password" name="code-three" required
+                    minlength="1" maxlength="1" />
+                  <label for="code-four" aria-label="Fourth Digit"></label>
+                  <input type="password" autocomplete="current-password new-password" name="code-four" required
+                    minlength="1" maxlength="1" />
+                </div>
+              </div>
+            </form>
             <p class="home">example board:</p>
-            <p class="home"><a href="https://www.scrumblr.roarcoder.dev/board?boardname=testboard">board/testboard</a></p><br><br><br>
+            <p class="home"><a href="https://www.scrumblr.roarcoder.dev/board?boardname=testboard">board/testboard</a>
+            </p><br><br><br>
             <p class="home small">sourcecode at <a href="https://github.com/aliasaria/scrumblr">github</a></p>
           </td>
         </tr>
@@ -64,7 +70,7 @@
     <div class="alert-body">
       Board already exists, please enter another board name
     </div>
-</div>
+  </div>
   <div class="stickers">
     <div class="sticker" id="sticker-red"></div>
     <div class="sticker" id="sticker-blue"></div>
@@ -82,16 +88,17 @@
   <!--display # of active users here-->
   <div class="active-connections">connections: undefined</div>
   <!--<div style="width: 980px; height: 450px; border: solid 2px; opacity:.1; margin-top: 100px"> this will be the backlog that only appears on drag or perhaps not at all</div>-->
-  <script type="text/javascript">	  
+  <script type="text/javascript">
     var _gaq = _gaq || [];
     _gaq.push(['_setAccount', 'UA-2069672-4']);
     _gaq.push(['_trackPageview']);
-    (function () { var ga = document.createElement('script');
+    (function () {
+      var ga = document.createElement('script');
       ga.type = 'text/javascript';
       ga.async = true;
       ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
       var s = document.getElementsByTagName('script')[0];
       s.parentNode.insertBefore(ga, s);
     })();  
-    </script>
+  </script>
 </body>
