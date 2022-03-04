@@ -578,9 +578,11 @@ function addEventListenerToHomePage () {
         if(key.startsWith('code-')) {
           passCode += value
         };
-      })
+      });
+      return passCode;
     }
-    const passCode = getValidPassword();
+    
+    const passCode = getValidPassword(formData);
     if(passCode.length !== 4) {
       console.warn('passcode is not of length 4');
       return;
@@ -675,6 +677,7 @@ function localDevEnv (pathname) {
       // do stuff for home.html
       history.replaceState(null, null, '/');
       addEventListenerToHomePage()
+      onHomePageLoad();
       break;
     }
     default: {
@@ -705,6 +708,7 @@ function productionEnv (pathname) {
       // do stuff for home.html
       history.replaceState(null, null, '/');
       addEventListenerToHomePage();
+      onHomePageLoad();
       break;
     }
     default: {
@@ -723,8 +727,13 @@ async function onLoad() {
     }
     default: {
       localDevEnv(pathname)
+     
     }
   }
   // TODO
   // document.getElementById('confirmation-prompt').style.display = 'none';
+}
+
+async function onHomePageLoad() {
+  boardNames = await getBoardNames();
 }
