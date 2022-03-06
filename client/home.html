@@ -25,51 +25,34 @@
         <tr>
           <td>
             <h1 class="home">scrumblr.</h1>
-              <div class="tabs">
-                <div class="tab">
-                    <input type="radio" id="tab-1" name="tab-group-1" checked>
-                    <label for="tab-1">Create Board</label>
-                    
-                    <div class="content">
-                      <form name="createBoard" class="home create-board-form">
-                        <div class="board-name">
-                          <label for="boardname">name your new board:</label><br>
-                          <input class="text" autofocus required minlength="1" type="text" name="boardname"
-                            placeholder="board name">
-                          <button id="go" type="submit">&nbsp;go.</button>
-                        </div>
-                        <div class="passcode-ui">
-                          <div id="code-block" class="special hidden">
-                            <h3>Enter a passcode:</h3>
-                            <span id="code"></span>
-                            <br />
+                <form name="createBoard" class="home create-board-form">
+                  <div class="board-name">
+                    <label for="boardname">name your board:</label><br>
+                    <input class="text" autofocus required minlength="1" type="text" name="boardname"
+                      placeholder="board name">
+                    <button id="go" type="submit">&nbsp;go.</button>
+                  </div>
+                  <div class="passcode-ui">
+                    <div id="code-block" class="special hidden">
+                      <h3>Enter a passcode:</h3>
+                      <span id="code"></span>
+                      <br />
 
-                            <label for="code-one" aria-label="First Digit"></label>
-                            <input type="password" autocomplete="current-password new-password" name="code-one" required
-                              minlength="1" maxlength="1" />
-                            <label for="code-two" aria-label="Second Digit"></label>
-                            <input type="password" autocomplete="current-password new-password" name="code-two" required
-                              minlength="1" maxlength="1" />
-                            <label for="code-three" aria-label="Third Digit"></label>
-                            <input type="password" autocomplete="current-password new-password" name="code-three" required
-                              minlength="1" maxlength="1" />
-                            <label for="code-four" aria-label="Fourth Digit"></label>
-                            <input type="password" autocomplete="current-password new-password" name="code-four" required
-                              minlength="1" maxlength="1" />
-                          </div>
-                        </div>
-                      </form>
-                    </div> 
-                </div>
-                  
-                <div class="tab">
-                    <input type="radio" id="tab-2" name="tab-group-1">
-                    <label for="tab-2">Tab Two</label>
-                    
-                    <div class="content">
-                        stuff
-                    </div> 
-                </div>
+                      <label for="code-one" aria-label="First Digit"></label>
+                      <input class="bg-gray" type="password" autocomplete="current-password new-password" name="code-one" required
+                        minlength="1" maxlength="1" />
+                      <label for="code-two" aria-label="Second Digit"></label>
+                      <input class="bg-gray" type="password" autocomplete="current-password new-password" name="code-two" required
+                        minlength="1" maxlength="1" />
+                      <label for="code-three" aria-label="Third Digit"></label>
+                      <input class="bg-gray" type="password" autocomplete="current-password new-password" name="code-three" required
+                        minlength="1" maxlength="1" />
+                      <label for="code-four" aria-label="Fourth Digit"></label>
+                      <input class="bg-gray" type="password" autocomplete="current-password new-password" name="code-four" required
+                        minlength="1" maxlength="1" />
+                    </div>
+                  </div>
+                </form>
             </div>
             <p class="home">example board:</p>
             <p class="home"><a href="https://www.scrumblr.roarcoder.dev/board?boardname=testboard">board/testboard</a>
@@ -86,7 +69,7 @@
       <div><button type="button" class="ml-2 mb-1 close" onclick="closeAlert()">x</button></div>
     </div>
     <div class="alert-body">
-      Board already exists, please enter another board name
+      Board already exists or incorrect passcode
     </div>
   </div>
   <div class="stickers">
