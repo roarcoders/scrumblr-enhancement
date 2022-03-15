@@ -1,6 +1,6 @@
 let sessionBoardId;
 // let url = 'http://localhost:3000/board/'
-let url = 'https://37run05fad.execute-api.ap-southeast-2.amazonaws.com/prod/board/';
+let url = 'https://xc00lhup6e.execute-api.ap-southeast-2.amazonaws.com/prod/board/';
 let boardNames;
 const webSocketURL = 'wss://n4f51sq0t1.execute-api.ap-southeast-2.amazonaws.com/prod';
 /**@type {WebSocket} */
@@ -24,6 +24,8 @@ async function createNewBoard(boardName, passCode) {
    * Checking if the entered BoardName already exists
    **/
   boardNames = await getBoardNames();
+  let isPasscodeValid = await validateCredentials(boardName, passCode);
+  console.log(isPasscodeValid);
   if(boardNames.includes(boardName)) return openAlert(); 
   sessionBoardId = await postBoardName(boardName, passCode);
 
@@ -103,6 +105,27 @@ async function getBoardNames() {
   } catch (error) {
     console.error(error.message ? error.message : error);
   }
+}
+
+async function validateCredentials(boardName,passcode) {
+
+
+  let response = await fetch(url + 'verifyPinAndBoardName', {
+    method: 'POST',
+    headers: {
+      'Content-Type':'application/json',
+      'Allow-Control-Access-Origin':'*'
+    },
+    body: JSON.stringify({
+      'BoardName': boardName,
+      'Passcode':passcode
+    }),
+  })
+  .then((response) => response.json())
+  console.log(response);
+
+  return response;
+
 }
 
 async function getBoards() {
@@ -708,7 +731,6 @@ function productionEnv (pathname) {
       // do stuff for home.html
       history.replaceState(null, null, '/');
       addEventListenerToHomePage();
-      onHomePageLoad();
       break;
     }
     default: {
@@ -734,6 +756,6 @@ async function onLoad() {
   // document.getElementById('confirmation-prompt').style.display = 'none';
 }
 
-async function onHomePageLoad() {
-  boardNames = await getBoardNames();
-}
+// 1. compare passcode from the backend
+// 2. backend passcode validation function return true of false
+// 3. based on the result, we show the message
