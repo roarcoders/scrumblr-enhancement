@@ -2,7 +2,7 @@ let sessionBoardId;
 // let url = 'http://localhost:3000/board/'
 let url = 'https://xc00lhup6e.execute-api.ap-southeast-2.amazonaws.com/prod/board/';
 let boardNames;
-const webSocketURL = 'wss://n4f51sq0t1.execute-api.ap-southeast-2.amazonaws.com/prod';
+const webSocketURL = 'wss://ej6unz28ji.execute-api.ap-southeast-2.amazonaws.com/prod';
 /**@type {WebSocket} */
 let webSocket;
 const PROD_HOST = 'www.scrumblr.roarcoder.dev';
@@ -24,14 +24,25 @@ async function createNewBoard(boardName, passCode) {
    * Checking if the entered BoardName already exists
    **/
   boardNames = await getBoardNames();
-  let isPasscodeValid = await validateCredentials(boardName, passCode);
-  console.log(isPasscodeValid);
-  if(boardNames.includes(boardName)) return openAlert(); 
-  sessionBoardId = await postBoardName(boardName, passCode);
 
-  setLocalStorage('boardName',boardName);
-  setLocalStorage('boardId', sessionBoardId.BoardId)
+  const isMatch = boardNames.includes(boardName); 
+
+  const isPasscodeValid = await validateCredentials(boardName, passCode);
+
+  if(isMatch && !isPasscodeValid) {
+    return openAlert(); 
+  }
+
+  /** create board */
+  if(!isMatch && !isPasscodeValid) {
+    sessionBoardId = await postBoardName(boardName, passCode);
+    setLocalStorage('boardName',boardName);
+    setLocalStorage('boardId', sessionBoardId.BoardId)
+  }
+
   goToBoardURL(boardName)
+
+
   //Delaying code run for 500ms so that postBoardName is able to penetrate the request
 
   //Uncomment or comment when testing
