@@ -711,7 +711,6 @@ function localDevEnv (pathname) {
       // do stuff for home.html
       history.replaceState(null, null, '/');
       addEventListenerToHomePage()
-      onHomePageLoad();
       break;
     }
     default: {

@@ -6,6 +6,15 @@
   <script src="environment.js"></script>
   <script defer src="still-frontend.js"></script>
   <script src="script.js"></script>
+  <script
+  src="https://code.jquery.com/jquery-3.6.0.min.js"
+  integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+  crossorigin="anonymous"></script>
+  <script>
+    $(function() {
+      $(".passcode-ui").load("passcode-ui.html")
+    });
+  </script>
 
   <link rel="stylesheet" type="text/css" href="css/style.css" />
   <!-- FONTS -->
@@ -32,26 +41,7 @@
                       placeholder="board name">
                     <button id="go" type="submit">&nbsp;go.</button>
                   </div>
-                  <div class="passcode-ui">
-                    <div id="code-block" class="special hidden">
-                      <h3>Enter a passcode:</h3>
-                      <span id="code"></span>
-                      <br />
-
-                      <label for="code-one" aria-label="First Digit"></label>
-                      <input class="bg-gray" type="password" autocomplete="current-password new-password" name="code-one" required
-                        minlength="1" maxlength="1" />
-                      <label for="code-two" aria-label="Second Digit"></label>
-                      <input class="bg-gray" type="password" autocomplete="current-password new-password" name="code-two" required
-                        minlength="1" maxlength="1" />
-                      <label for="code-three" aria-label="Third Digit"></label>
-                      <input class="bg-gray" type="password" autocomplete="current-password new-password" name="code-three" required
-                        minlength="1" maxlength="1" />
-                      <label for="code-four" aria-label="Fourth Digit"></label>
-                      <input class="bg-gray" type="password" autocomplete="current-password new-password" name="code-four" required
-                        minlength="1" maxlength="1" />
-                    </div>
-                  </div>
+                  <div class="passcode-ui"></div>
                 </form>
             </div>
             <p class="home">example board:</p>
