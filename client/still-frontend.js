@@ -119,8 +119,8 @@ async function getBoardNames() {
 }
 
 async function validateCredentials(boardName,passcode) {
-
-
+  
+  
   let response = await fetch(url + 'verifyPinAndBoardName', {
     method: 'POST',
     headers: {
@@ -594,36 +594,69 @@ function closeToastMessage() {
   })
 }
 
+/**
+ * @param {HTMLFormElement} form
+ * @returns {[boardName: string, passCode: string]} - returns boardName and passCode 
+ */
+function handlePasscodeForm(form) {
+
+  const formData = new FormData(form);
+
+  function getValidPassword(form) {
+    let passCode = ''
+    form.forEach((value, key) => {
+      if (key.startsWith('code-')) {
+        passCode += value
+      };
+    });
+    return passCode;
+  }
+
+  const passCode = getValidPassword(formData);
+  if (passCode.length !== 4) {
+    console.warn('passcode is not of length 4');
+    return;
+  }
+
+  const boardName = formData.get('boardname')
+
+  return [boardName, passCode];
+}
+
 function addEventListenersToBoardPage () {
   const saveNoteBTN = document.getElementById('save-button');
-  saveNoteBTN.addEventListener('click', postPatchNotesOnSave);
+  $(".passcode-ui").load("passcode-ui.html");
+  saveNoteBTN.addEventListener('click', () => 
+  $(".passcode-ui, form[name='passcode-form']").show()
+  
+  );
+  document.querySelector("form[name='passcode-form']").addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const [_, passcode] = handlePasscodeForm(event.target)
+
+    const isPasscodeValid = await validateCredentials(getLocalStorage('boardName'), passcode);
+    
+    const setAlertMsg = (msg) => document.querySelector('.alert-body').textContent = msg
+    
+    if(!isPasscodeValid) {
+      setAlertMsg('Invalid Password')
+      return openAlert();
+    }
+    
+    setAlertMsg('Board and notes saved successfully')
+
+    await postPatchNotesOnSave();
+    openAlert();
+    $(".passcode-ui, form[name='passcode-form']").hide()
+  } )
 }
 
 function addEventListenerToHomePage () {
   document.querySelector('form[name=createBoard]').addEventListener('submit', (event) => {
     event.preventDefault();
-    /**@type {HTMLFormElement} */
-    const form = event.target;
-    const formData = new FormData(form);
-    
-    function getValidPassword(form) {
-      let passCode = ''
-      form.forEach((value, key) => {
-        if(key.startsWith('code-')) {
-          passCode += value
-        };
-      });
-      return passCode;
-    }
-    
-    const passCode = getValidPassword(formData);
-    if(passCode.length !== 4) {
-      console.warn('passcode is not of length 4');
-      return;
-    }
 
-    const boardName = formData.get('boardname');
-    createNewBoard(boardName, passCode)
+
+    createNewBoard(...handlePasscodeForm(event.target))
   });
   // for the passcode / password form section
   const inputs = [...document.querySelectorAll('form .passcode-ui input')];
