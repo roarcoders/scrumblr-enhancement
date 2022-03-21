@@ -495,10 +495,58 @@ function getBoardNotesArray () {
 
 /**
  * 
+ * @param {string} boardId 
+ * @param {BoardNote[]} notes 
+ * @param {string} passcode 
+ * @param {string} boardName 
+ * @returns {number} - returns the status or undefined
  */
-async function postPatchNotesOnSave() {
+async function postNotes(boardId, notes, passcode, boardName) {
+  try {
+    const res = await fetch(url + boardId + '/note/', {
+      method: 'POST',
+      mode: 'cors',
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+      },
+      body: JSON.stringify({
+        Notes: notes,
+        Passcode: passcode,
+        BoardName: boardName,
+      }),
+    });
+    if (res.ok) {
+      return res.status
+    }
+    throw Error(res.status);
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+/**
+ * 
+ */
+async function postPatchNotesOnSave(passcode) {
   const boardId = getLocalStorage('boardId');
   const notes = getBoardNotesArray();
+
+  if(false) {
+    const res = await postNotes(boardId, notes, passcode, getLocalStorage('boardName'));
+    if(res) {
+    notes.forEach(({data, id}) => {
+
+      /** @type {BoardNote} */
+      const updatedValue = {
+        data,
+        id,
+        status: 'Inserted'
+      };
+      boardNotesMap.set(id, updatedValue);
+    })
+  }
+  }
 
   for await (const {data, id, status} of notes) {
     console.log(JSON.stringify({data, id, status}, null, 2))
@@ -527,44 +575,6 @@ async function postPatchNotesOnSave() {
       }
     }
   }
-  /**
-   * @zainafzal88
-   * @toreylittlefield
-   * Writes Data To DynamoDB TOO FAST! Not Strongly Consistent
-   * @todo need to discuss options of using only one post request to update the whole note array at once! 
-   * */
-  // const result = await Promise.allSettled(
-  //   notes.map(async ({data, id, status }) => {
-
-  //   console.log(JSON.stringify({data, id, status}, null, 2))
-  //   const failureMsg = () => console.error(`fail to insert note ${id}: ${note}`)
-  //   switch(status) {
-  //     case 'Inserted': {
-  //       console.log('patch')
-  //       const res = await patchNote(boardId, id, data).catch(err => console.error(err))
-  //       if(!res === 200) failureMsg()
-  //       return res;
-  //     }
-  //     case 'Not Inserted': {
-  //       console.log('POST')
-  //       const res = await postNote(boardId, id, data).catch(err => console.error(err))
-        
-  //       if(!res === 200) {
-  //         failureMsg() 
-  //         return res;
-  //       } 
-          
-        
-  //       /** @type {BoardNote} */
-  //       const updatedValue = {data, id, status: 'Inserted'}
-  //       boardNotesMap.set(id, updatedValue);
-  //       return res;
-  //     }
-  //   }
-  // })
-  // )
-  // console.log(result)
-  /** Writes Data To DynamoDB TOO FAST! */
 }
 
 function openToastMessage() {
@@ -645,7 +655,7 @@ function addEventListenersToBoardPage () {
     
     setAlertMsg('Board and notes saved successfully')
 
-    await postPatchNotesOnSave();
+    await postPatchNotesOnSave(passcode);
     openAlert();
     $(".passcode-ui, form[name='passcode-form']").hide()
   } )
