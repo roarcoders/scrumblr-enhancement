@@ -548,6 +548,13 @@ async function postPatchNotesOnSave(passcode) {
   }
   }
 
+  
+  if(columns.toString() !== prevColumns.toString()) {
+    // send the post request with the columns
+    /** TODO ADD A POST REQUEST TO UPDATE THE COLUMNDS IN DB */
+    prevColumns = columns;
+  }
+
   for await (const {data, id, status} of notes) {
     console.log(JSON.stringify({data, id, status}, null, 2))
     const failureMsg = () => console.error(`fail to insert note ${id}: ${note}`)
@@ -637,7 +644,8 @@ function addEventListenersToBoardPage () {
   const saveNoteBTN = document.getElementById('save-button');
   $(".passcode-ui").load("passcode-ui.html");
   saveNoteBTN.addEventListener('click', () => 
-  $(".passcode-ui, form[name='passcode-form']").show()
+    $(".passcode-ui, form[name='passcode-form']").show()
+
   
   );
   document.querySelector("form[name='passcode-form']").addEventListener('submit', async (event) => {

@@ -1,6 +1,7 @@
 var cards = {};
 var totalcolumns = 0;
 var columns = [];
+let prevColumns = columns;
 var currentTheme = "bigcards";
 var boardInitialized = false;
 var keyTrap = null;
