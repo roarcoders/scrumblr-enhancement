@@ -1,6 +1,6 @@
 let sessionBoardId;
 // let url = 'http://localhost:3000/board/'
-let url = 'https://xc00lhup6e.execute-api.ap-southeast-2.amazonaws.com/prod/board/';
+let url = 'https://qdeckt5m9l.execute-api.ap-southeast-2.amazonaws.com/prod/board/';
 let boardNames;
 const webSocketURL = 'wss://ej6unz28ji.execute-api.ap-southeast-2.amazonaws.com/prod';
 /**@type {WebSocket} */
@@ -175,7 +175,7 @@ async function getBoardByName(boardName) {
   })
     .then((response) => response.json())
     .then((json) => json);
-  console.log(currentBoard);
+  //console.log(currentBoard);
   return currentBoard;
 }
 
@@ -501,10 +501,10 @@ function getBoardNotesArray () {
  * @param {string[]} boardColumnsArray 
  * @returns {number} - returns the status or undefined
  */
-async function postBoardColumns(boardColumnsArray) {
+async function postBoardColumns(boardColumnsArray, boardId) {
   try {
     const res = await fetch(url + boardId + '/columns/', {
-      method: 'POST',
+      method: 'PATCH',
       mode: 'cors',
       headers: {
         'Content-Type': 'application/json',
@@ -554,12 +554,9 @@ async function postPatchNotesOnSave(passcode) {
   }
   }
 
-
-
-  
   if(!areArraysEqual(columns, prevColumns)) {
     // send the post request with the columns
-    const res = await postBoardColumns(columns);
+    const res = await postBoardColumns(columns, boardId);
     if(res !== 200) {
       setAlertMsg('Failed To Save Board Columns')
       return openAlert();
@@ -742,6 +739,8 @@ async function loadBoardPage() {
   addBoardQueryStringToURL(boardName);
 
   const boardData = await getBoardByName(boardName);
+  sessionStorage.setItem('boardData',JSON.stringify(boardData));
+ 
   if (boardData.Items.length === 0) return redirectToHome();
 
   const boardId = boardData.Items[0].BoardId;
@@ -825,7 +824,3 @@ async function onLoad() {
   // TODO
   // document.getElementById('confirmation-prompt').style.display = 'none';
 }
-
-// 1. compare passcode from the backend
-// 2. backend passcode validation function return true of false
-// 3. based on the result, we show the message

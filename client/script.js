@@ -8,7 +8,7 @@ var keyTrap = null;
 /**@type Map<(id: string), BoardNote> */
 const boardNotesMap = new Map();
 const noteStatus = {NI:"Not Inserted", I:"Inserted"}
-
+const boardData = sessionStorage.getItem('boardData');
 var baseurl = location.pathname.substring(0, location.pathname.lastIndexOf('/'));
 /*------removing socketIO references----------(Jason)
 //var socket = io();
@@ -713,7 +713,6 @@ function displayRemoveColumn() {
 
 function createColumn(name) {
     if (totalcolumns >= 8) return false;
-
     drawNewColumn(name);
     columns.push(name);
 
@@ -1038,6 +1037,8 @@ $(function() {
         }
     );
 
+    
+
     $('#add-col').click(
         function() {
             createColumn('New');
@@ -1198,3 +1199,20 @@ function openAlert() {
     const fadeOut = animations.find(ani => ani.animationName === 'fade-out')
     fadeOut.onfinish = () => closeAlert();
 }
+
+async function getBoardByName(boardName) {
+    // alert("this was called");
+  
+    const currentBoard = await fetch(url + boardName, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+      },
+    })
+      .then((response) => response.json())
+      .then((json) => json);
+    //console.log(currentBoard);
+    return currentBoard;
+  }
+
