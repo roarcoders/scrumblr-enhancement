@@ -46,10 +46,6 @@ async function createNewBoard(boardName, passCode) {
 
 
   //Delaying code run for 500ms so that postBoardName is able to penetrate the request
-
-  //Uncomment or comment when testing
-  // console.log(getBoardByName(value));
-  console.log(sessionBoardId);
 }
 
 async function getBoardName(boardId) {
@@ -135,7 +131,6 @@ async function validateCredentials(boardName,passcode) {
     }),
   })
   .then((response) => response.json())
-  console.log(response);
 
   return response;
 
@@ -175,7 +170,10 @@ async function getBoardByName(boardName) {
   })
     .then((response) => response.json())
     .then((json) => json);
-  //console.log(currentBoard);
+  localStorage.setItem('boardObject', JSON.stringify(currentBoard));
+
+  columnNames = currentBoard.Items[0].ColumnNames;
+  columnNames.map(name => createColumn(name));
   return currentBoard;
 }
 
@@ -240,7 +238,6 @@ async function getNote(boardId, noteId) {
       return text ? JSON.parse(text) : {};
     });
   });
-  console.log(note);
 }
 
 async function patchNote(boardId, noteId, newNote) {
@@ -565,17 +562,14 @@ async function postPatchNotesOnSave(passcode) {
   }
 
   for await (const {data, id, status} of notes) {
-    console.log(JSON.stringify({data, id, status}, null, 2))
     const failureMsg = () => console.error(`fail to insert note ${id}: ${note}`)
     switch(status) {
       case 'Inserted': {
-        console.log('patch')
         const res = await patchNote(boardId, id, data).catch(err => console.error(err))
         if(!res === 200) failureMsg()
         break;
       }
       case 'Not Inserted': {
-        console.log('POST')
         const res = await postNote(boardId, id, data).catch(err => console.error(err))
         
         if(!res === 200) {
