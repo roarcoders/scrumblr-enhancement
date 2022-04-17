@@ -669,6 +669,32 @@ function addEventListenersToBoardPage () {
   } )
 }
 
+function autoTabPasscodeForm() {
+    // for the passcode / password form section
+    document.querySelector('form .passcode-ui').addEventListener('keyup', (event) => {
+      const inputsPasscode = [...document.querySelectorAll('form .passcode-ui input')];
+      const inputElement = event.target;
+      const inputElementName = inputElement.name;
+  
+      if(event.type === 'keyup' && inputElement instanceof HTMLInputElement) {
+  
+        const indexEl = inputsPasscode.findIndex(inputEl => inputEl.name === inputElementName)
+        if(indexEl === -1) return;
+        
+        const nextInput = inputsPasscode[indexEl + 1];
+        const prevInput = inputsPasscode[indexEl - 1]
+  
+    
+        // move to next pin code input or go back to previous pin code input
+        if(inputElement.value.length === parseInt(inputElement.getAttribute('maxlength')) && nextInput) {
+          nextInput.focus();
+        } else if(!inputElement.value.length && prevInput) {
+          prevInput.focus();
+        }
+      }
+    })
+}
+
 function addEventListenerToHomePage () {
   document.querySelector('form[name=createBoard]').addEventListener('submit', (event) => {
     event.preventDefault();
@@ -676,29 +702,7 @@ function addEventListenerToHomePage () {
 
     createNewBoard(...handlePasscodeForm(event.target))
   });
-  // for the passcode / password form section
-  const inputs = [...document.querySelectorAll('form .passcode-ui input')];
-  document.querySelector('form .passcode-ui').addEventListener('keyup', (event) => {
-    const element = event.target;
-    const name = element.name;
-
-    if(event.type === 'keyup' && element instanceof HTMLInputElement) {
-
-      const indexEl = inputs.findIndex(element => element.name === name)
-      if(indexEl === -1) return;
-      
-      const nextInput = inputs[indexEl + 1];
-      const prevInput = inputs[indexEl - 1]
-
-
-      // move to next pin code input or go back to previous pin code input
-      if(element.value.length === parseInt(element.getAttribute('maxlength'), 10) && nextInput) {
-        nextInput.focus();
-      } else if(!element.value.length && prevInput) {
-        prevInput.focus();
-      }
-    }
-  })
+  autoTabPasscodeForm()
 }
 
 /**
