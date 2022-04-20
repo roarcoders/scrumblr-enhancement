@@ -2,7 +2,7 @@ let sessionBoardId;
 // let url = 'http://localhost:3000/board/'
 let url = 'https://qdeckt5m9l.execute-api.ap-southeast-2.amazonaws.com/prod/board/';
 let boardNames;
-const webSocketURL = 'wss://ej6unz28ji.execute-api.ap-southeast-2.amazonaws.com/prod';
+const webSocketURL = 'wss://2c4155kkaf.execute-api.ap-southeast-2.amazonaws.com/prod';
 /**@type {WebSocket} */
 let webSocket;
 const PROD_HOST = 'www.scrumblr.roarcoder.dev';
