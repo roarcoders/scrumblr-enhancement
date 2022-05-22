@@ -953,12 +953,11 @@ input {
 	margin: 0 auto;
 	position: relative;
 	bottom: 50%;
-	z-index: 10;
-  }
+	display: none;
+}
   
 #myBar {
     width: 1%;
     height: 10px;
     background-color: green;
-
-  }
+}
