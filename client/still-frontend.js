@@ -477,8 +477,8 @@ function initCardsInScriptJS(boardData) {
   const boardNotes = getBoardNotesArray();
 
   const cardsArray = boardNotes.map((
-    { id, data: { colour, position: { left, top }, text }}
-    ) => formAValidNote({ id, text, colour, x: left, y: top }));
+    { id, data: { colour, position: { left, top }, text, status}}
+    ) => formAValidNote({ id, text, colour, x: left, y: top, status }));
 
   getMessage({ action: 'initCards', data: cardsArray });
 }
