@@ -856,3 +856,93 @@ button.close {
 	cursor: pointer;
 	transition: 0.10s;
 }
+
+/* TOAST MESSAGE */
+.hide {
+	display: none;
+}
+
+.toast-animate {
+	--_duration: 3s;
+	--_travel-distance: 0;
+  
+	will-change: transform;
+	animation: 
+	  fade-in .3s ease,
+	  slide-in .3s ease,
+	  fade-out .3s ease var(--_duration);
+}
+
+@keyframes fade-in {
+	from { opacity: 0 }
+}
+  
+@keyframes fade-out {
+	to { opacity: 0 }
+}
+  
+@keyframes slide-in {
+	from { transform: translateY(var(--_travel-distance, 10px)) }
+}
+
+form {
+	display: flex;
+	justify-content: center;
+	margin-bottom: 9%;
+}
+
+.create-board-form {
+	display: flex;
+	justify-content: center;
+	flex-direction: column;
+	gap: 10px;
+}
+
+input {
+	margin: 0 0.5rem;
+	padding: 0.5rem;
+	border: 1px solid #333;
+	width: 35px;
+	height: 35px;
+	text-align: center;
+	font-size: 3rem;
+}
+
+.board-name {
+	flex-basis: 100%;
+}
+
+.special {
+	font-size: 1.5rem;
+	opacity: 1;
+	visibility: visible;
+	transition: all 0.3s ease;
+	text-align: center;
+    margin-bottom: 15px;
+}
+
+.special i {
+	font-size: 1rem;
+	cursor: pointer;
+}
+
+.passcode-ui {
+	flex-basis: 100%;
+	margin: 0.6rem auto;
+	padding: 0.05rem 0.20rem;
+	border-radius: 8px;
+}
+
+.passcode-ui label {
+	font-size: 1.75rem;
+}
+
+.passcode-ui input {
+	font-size: 1.5rem;
+	width: 20px;
+	height: 20px;
+}
+
+.bg-gray {
+	background-color: #c8c4bc;
+}

@@ -1,12 +1,11 @@
-//const e = require("cors");
-
 var cards = {};
 var totalcolumns = 0;
 var columns = [];
 var currentTheme = "bigcards";
 var boardInitialized = false;
 var keyTrap = null;
-const textForNotes = new Map();
+/**@type Map<(id: string), BoardNote> */
+const boardNotesMap = new Map();
 const noteStatus = {NI:"Not Inserted", I:"Inserted"}
 
 var baseurl = location.pathname.substring(0, location.pathname.lastIndexOf('/'));
@@ -82,7 +81,43 @@ function blockUI(message) {
 }
 ------removing socketIO references----------(Jason)*/
 
-//respond to an action event
+/**
+ * @typedef {{id: string}} CardId
+ * @typedef {{value: string}} CardValue
+ * @typedef {{colour: Colour}} CardColour
+ * @typedef {CardId & CardValue & CardColour} CardData 
+ */
+
+/**
+ * @typedef {Object} InitCards
+ * @property {'createCard'} action
+ * @property {NoteToDraw} data
+ */
+
+/**
+ * @typedef {Object} EditNote
+ * @property {'editCard'} action
+ * @property {CardData} data
+ */
+
+/**
+ * @typedef {Object} DeleteNote
+ * @property {'deleteCard'} action
+ * @property {CardId} data
+ */
+
+/**
+ * @typedef {Object} InitCards
+ * @property {'initCards'} action
+ * @property {NoteToDraw[]} data
+ */
+
+/**
+ * respond to an action event 
+ * @description dispatchs various actions like 'createCard', 'editCard' or 'deleteCard' card 
+ * @typedef {EditNote | DeleteNote | InitCards} M 
+ * @param {M} m
+ */
 function getMessage(m) {
     var message = m; //JSON.parse(m);
     var action = message.action;
@@ -193,46 +228,47 @@ function getMessage(m) {
     
 }
 
-async function updateArray()
-{ 
+/**@toreylittlefield I think this is not used anymore */
+// async function updateArray()
+// { 
     
-    let sessionBoardId = localStorage.getItem("boardId");
+//     let sessionBoardId = localStorage.getItem("boardId");
 
-    textForNotes.forEach(async function(value, key) {
+//     boardNotesMap.forEach(async function(value, key) {
        
-        let currentStatus=404;
-        console.log(value.status);
-        switch (value.status) {
-            case "Not Inserted":
-                currentStatus = await postNote(sessionBoardId,key,value.data);
-                switch (currentStatus) {
-                    case 200:
-                        openAlert()
-                        let note = {
-                            id: key,
-                            data: value.data,
-                            status: noteStatus.I
-                        }
-                        textForNotes.set(key, note);  
-                }
-            break;
-            case "Inserted":
-                currentStatus = await patchNote(sessionBoardId,key,value.data);
-            default:
-        }
-      });      
+//         let currentStatus=404;
+//         console.log(value.status);
+//         switch (value.status) {
+//             case "Not Inserted":
+//                 currentStatus = await postNote(sessionBoardId,key,value.data);
+//                 switch (currentStatus) {
+//                     case 200:
+//                         openAlert()
+//                         let note = {
+//                             id: key,
+//                             data: value.data,
+//                             status: noteStatus.I
+//                         }
+//                         boardNotesMap.set(key, note);  
+//                 }
+//             break;
+//             case "Inserted":
+//                 currentStatus = await patchNote(sessionBoardId,key,value.data);
+//             default:
+//         }
+//       });      
 
-}
+// }
 
-async function deleteNote(cardId) {
+async function requestDeleteNote(cardId) {
 
     // let sessionBoardId = localStorage.getItem("boardId");
 
-    textForNotes.delete(cardId);
+    boardNotesMap.delete(cardId);
 
-    console.log(localStorage.getItem("boardId"));
-
-    await deleteNote(localStorage.getItem("boardId"), cardId);
+    const boardId = getLocalStorage('boardId')
+    if(!boardId) return console.error('cannot delete card, no boardId in localstorage')
+    await deleteNote(boardId, cardId);
 }
 
 function updateText (item, text) {
@@ -379,12 +415,15 @@ function drawNewCard(id, text, x, y, rot, colour, type, sticker, animationspeed)
 
     card.children('.delete-card-icon').click(
         function() {
-            deleteNote(id);
+            requestDeleteNote(id);
             $("#" + id).remove();
             //notify server of delete
             sendAction('deleteCard', {
                 'id': id
             });
+            /**@type DeleteNote */
+            const message = { action: 'deleteCard', data: { id } }
+            dispatchWebSocketMessage({action: 'default', message});
         }
     );
 
@@ -393,12 +432,39 @@ function drawNewCard(id, text, x, y, rot, colour, type, sticker, animationspeed)
                 rotateCardColor(id, $(this).data('colour'));
             });
  
-
+    
     card.children('.content').editable({
         multiline: true,
         saveDelay: 600,
         save: function(content) {
             onCardChange(id, content.target.innerText, null);
+        },
+        /**@see {@link [end method](https://github.com/agrinko/jquery-contenteditable#end-void)} */
+        end: function(event) {
+            const text = event.target.textContent
+            /**@type EditNote */
+            const message = { 
+                action: 'editCard', 
+                data: { 
+                    id, 
+                    value: text, 
+                    colour: '' 
+                } 
+            }
+            dispatchWebSocketMessage({ action: 'default', message })
+            const cardElement = document.getElementById(id);
+            
+            const top = parseInt(cardElement.style.top, 10);
+            const left = parseInt(cardElement.style.left, 10);
+            
+            /**@type NotePosition */
+            const position = { top, left }
+            
+            /**@type {SVGElement} */
+            const svgCard = cardElement.querySelector('[data-colour]');
+            const colour = svgCard.getAttribute('data-colour');
+
+            addUpdateBoardNotes({ id, text, position, colour });
         }
     });
 
@@ -414,8 +480,10 @@ async function onCardChange(id, text, c) {
         value: text,
         colour: c
     });
-
-    addTextToArray(id,text)
+    dispatchWebSocketMessage({action: 'default', 
+        message: { action: 'editCard', 
+        data: { id, value: text, colour: c }
+    }});
 }
 
 function moveCard(card, position) {
@@ -477,34 +545,38 @@ async function createCard(id, text, x, y, rot, colour, type) {
     };
 
     sendAction(action, data);
-
+    dispatchWebSocketMessage({action: 'default', message: {action, data}})
 }
 
-function addTextToArray(id, text) {
-    let note={};
-    console.log(textForNotes.has(id));
-    if(!textForNotes.has(id))
-    {
+/**
+ * 
+ * @param {Object} note
+ * @param {string} note.id
+ * @param {string} note.text
+ * @param {NotePosition} note.position
+ * @param {Colour} note.colour
+ */
+function addUpdateBoardNotes({id, text, position, colour}) {
+    console.log(...arguments)
+    let note = {};
+    if(!boardNotesMap.has(id)) {
+        /**@type BoardNote */
         note = {
-        id: id,
-        data: text,
-        status: noteStatus.NI
+            id: id,
+            data: { text, position, colour },
+            status: 'Not Inserted',
+        }
+    } else {
+        note = {
+            id:id,
+            data: { text, position, colour },
+            status: 'Inserted'
+        }
     }
-}
-else
-{
-    note = 
-    {
-        id:id,
-        data:text,
-        status: noteStatus.I
-    }
-}
-    textForNotes.set(note.id, note)
-    textForNotes.forEach(function(value, key) {
-        console.log(key+ ":" + value.data);
-      });
-    
+    boardNotesMap.set(note.id, note)
+    boardNotesMap.forEach(function(value, key) {
+        console.log(key+ ":", value.data);
+    });
 }
 
 var cardColours = ['yellow', 'green', 'blue', 'white'];
@@ -531,12 +603,22 @@ function rotateCardColor(id, currentColour) {
     //new position:
     var newIndex = index + 1;
     newIndex = newIndex % (stickyColours.length + 1);
+    const newColor = cardColours[newIndex];
+    
+    $('#'+id).children('.card-image').attr("src", 'images/' + newColor + '-card.png');
+    $('#'+id).children('.change-colour').data('colour',newColor);
+    
+    /** added these lines, looks like there was a bug in updating the colour attribute */
+    const card = document.getElementById(id);
+    const svg = card.querySelector('[data-colour]')
+    svg.setAttribute('data-colour', newColor);
 
-    $('#'+id).children('.card-image').attr("src", 'images/' + cardColours[newIndex] + '-card.png');
-    $('#'+id).children('.change-colour').data('colour',cardColours[newIndex]);
+    /** update the board note in the boardNotesMap */
+    const {data: { position, text } } = boardNotesMap.get(id);
+    addUpdateBoardNotes({ id, colour: newColor, position, text })
 
     //var trueId = id.substr(4); // remove "card" from start of id // no don't do this, server wants "card" in front
-    onCardChange(id, null, cardColours[newIndex]);
+    onCardChange(id, null, newColor);
 
 }
 
@@ -564,7 +646,7 @@ function initCards(cardArray) {
     }
 
     boardInitialized = true;
-    unblockUI();
+    // unblockUI();
 }
 
 
@@ -1102,9 +1184,16 @@ $(function() {
 });
 
 function closeAlert() {
-    document.getElementById('confirmation-prompt').style.display = 'none';
+    const toastMessage = document.getElementById('confirmation-prompt')
+    toastMessage.style.display = 'none';
+    toastMessage.classList.remove('toast-animate')
 }
 
 function openAlert() {
-    document.getElementById('confirmation-prompt').style.display = 'block';
+    const toastMessage = document.getElementById('confirmation-prompt')
+    toastMessage.style.display = 'block';
+    toastMessage.classList.add('toast-animate')
+    const animations = toastMessage.getAnimations();
+    const fadeOut = animations.find(ani => ani.animationName === 'fade-out')
+    fadeOut.onfinish = () => closeAlert();
 }

@@ -1,177 +1,150 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <!-- STYLES -->
-    <link
-      rel="stylesheet"
-      href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"
-    />
-    <link rel="stylesheet" type="text/css" href="css/style.css" />
-    <link
-      rel="stylesheet"
-      title="cardsize"
-      href="css/bigcards.css"
-      type="text/css"
-      media="all"
-    />
-    <!-- FONTS -->
-    <link rel="preconnect" href="https://fonts.gstatic.com" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Stencil+Display:wght@100&family=Covered+By+Your+Grace&family=Rock+Salt&display=swap"
-      rel="stylesheet"
-    />
-    <!-- SCRIPTS -->
-    <!-- jQuery -->
-    <script
-      src="https://code.jquery.com/jquery-3.5.1.min.js"
-      integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0="
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
-      integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU="
-      crossorigin="anonymous"
-    ></script>
-    <!-- External Scripts -->
-    <script src="lib/jquery.ui.touch-punch.min.js"></script>
-    <!--<script src="lib/jquery.jeditable.js"></script>-->
-    <script src="lib/jquery.blockUI.js"></script>
-    <script src="lib/jquery-contenteditable.min.js"></script>
-    <!-- test -->
-    <!-- <script src="lib/signature_pad.js"></script>
-    <script src="lib/writingpad.js"></script> -->
-    <!-- Socket.IO -->
-    <!--<script src="socketio/socket.io.js"></script>-->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.1/socket.io.min.js"></script>
-    <!-- ** My Script ** -->
-    <script src="script.js"></script>
-    <script src="environment.js"></script>
-    <script src="still-frontend.js"></script>
-    <title></title>
-  </head>
-  <body>
-    <!-- Header Start-->
-    <header class="site-header">
-      <div class="site-header__wrapper">
-        <a class="greyheading" href="/">scrumblr</a>
-</div>
-    </header>
-    <div class="board-wrapper">
-      <div
-        class="topflexcontainer"
-        style="
+
+<head>
+  <!-- STYLES -->
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" />
+  <link rel="stylesheet" type="text/css" href="css/style.css" />
+  <link rel="stylesheet" title="cardsize" href="css/bigcards.css" type="text/css" media="all" />
+  <!-- FONTS -->
+  <link rel="preconnect" href="https://fonts.gstatic.com" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Stencil+Display:wght@100&family=Covered+By+Your+Grace&family=Rock+Salt&display=swap"
+    rel="stylesheet" />
+  <title></title>
+</head>
+
+<body>
+  <!-- Header Start-->
+  <header class="site-header">
+    <div class="site-header__wrapper">
+      <a class="greyheading" href="/">scrumblr</a>
+    </div>
+  </header>
+  <div class="board-wrapper">
+    <div class="topflexcontainer" style="
           display: flex;
           justify-content: space-between;
           align-items: baseline;
-        "
-      >
-        <h1 class="ceditable" id="board-title"></h1>
-</div>
-      <div class="board-outline" style="clear: both">
-        <div id="board">
-          <div id="board-doodles"></div>
-          <!--<canvas id="signature-pad" class="signature-pad" width=100% height=100%></canvas>-->
-          <image id="marker" src="images/marker.png"></image>
-          <image id="eraser" src="images/eraser.png"></image>
-          <table class="board-table" id="board-table">
-            <tr>
-              <td id="icon-col" width="1%">
-                <svg class="col-icon" id="add-col" width="20" height="20">
-                  <use
-                    xlink:href="teenyicons/teenyicons-outline-sprite.svg#outline--plus-circle"
-                  />
-                </svg>
-                <svg class="col-icon" id="delete-col" width="20" height="20">
-                  <use
-                    xlink:href="teenyicons/teenyicons-outline-sprite.svg#outline--minus-circle"
-                  />
-                </svg>
-              </td>
-            </tr>
-          </table>
-        </div>
-      </div>
-      <div id="confirmation-prompt" class="alert">
-          <div class="alert-header">
-            <strong class="mr-auto text-primary">Confirmation</strong>
-            <div><button type="button" class="ml-2 mb-1 close" onclick="closeAlert()">x</button></div>
-          </div>
-          <div class="alert-body">
-          Board and notes saved successfully
-          </div>
-      </div>
-      <div class="buttons">
-        <svg class="bottom-icon" id="create-card" width="20" height="20">
-          <use
-            xlink:href="teenyicons/teenyicons-outline-sprite.svg#outline--text-document"
-          />
-        </svg>
-        <svg class="bottom-icon" id="create-sticky" width="20" height="20">
-          <use
-            xlink:href="teenyicons/teenyicons-outline-sprite.svg#outline--note"
-          />
-        </svg>
-        <div id="save-button" onclick="return updateArray()">
-        <svg class="bottom-icon" id="save-sticky" width="20" height="20">
-          <use
-            xlink:href="teenyicons/teenyicons-outline-sprite.svg#outline--save"
-          />
-        </svg>
-      </div>
-        <!-- <svg viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg" width="15" height="15"><path d="M4.5 14.5v-3a1 1 0 011-1h4a1 1 0 011 1v3m3 0h-12a1 1 0 01-1-1v-12a1 1 0 011-1h8.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V13.5a1 1 0 01-1 1z" stroke="currentColor"></path></svg> -->
-      </div>
-      <div class="stickers">
-        <div class="sticker" id="sticker-red"></div>
-        <div class="sticker" id="sticker-blue"></div>
-        <div class="sticker" id="sticker-yellow"></div>
-        <div class="sticker" id="sticker-green"></div>
-        <br />
-        <div class="sticker" id="sticker-pink"></div>
-        <div class="sticker" id="sticker-lightblue"></div>
-        <div class="sticker" id="sticker-orange"></div>
-        <div class="sticker" id="sticker-purple"></div>
-<br />
-        <div class="sticker" id="nosticker"></div>
-      </div>
-      <div class="names">
-        <p>connected:</p>
-        <input id="yourname-input" /><span class="you-text">(you)</span>
-        <ul id="names-ul"></ul>
+        ">
+      <h1 class="ceditable" id="board-title"></h1>
+    </div>
+    <div class="board-outline" style="clear: both">
+      <div id="board">
+        <div id="board-doodles"></div>
+
+        <!--<canvas id="signature-pad" class="signature-pad" width=100% height=100%></canvas>-->
+        <image id="marker" src="images/marker.png"></image>
+        <image id="eraser" src="images/eraser.png"></image>
+        <table class="board-table" id="board-table">
+          <tr>
+            <td id="icon-col" width="1%">
+              <svg class="col-icon" id="add-col" width="20" height="20">
+                <use xlink:href="teenyicons/teenyicons-outline-sprite.svg#outline--plus-circle" />
+              </svg>
+              <svg class="col-icon" id="delete-col" width="20" height="20">
+                <use xlink:href="teenyicons/teenyicons-outline-sprite.svg#outline--minus-circle" />
+              </svg>
+            </td>
+          </tr>
+        </table>
       </div>
     </div>
-    <script type="text/javascript">
-      var _gaq = _gaq || [];
-      _gaq.push(["_setAccount", "UA-2069672-4"]);
-      _gaq.push(["_trackPageview"]);
-      (function () {
-        var ga = document.createElement("script");
-        ga.type = "text/javascript";
-        ga.async = true;
-        ga.src =
-          ("https:" == document.location.protocol
-            ? "https://ssl"
-            : "http://www") + ".google-analytics.com/ga.js";
-        var s = document.getElementsByTagName("script")[0];
-        s.parentNode.insertBefore(ga, s);
-      })();
-    </script>
-  </body>
+    <form name="passcode-form" class="hide">
+
+      <div class="passcode-ui"></div>
+      <button id="go" type="submit">Submit</button>
+    </form>
+    <div id="confirmation-prompt" class="alert">
+      <div class="alert-header">
+        <strong class="mr-auto text-primary">Confirmation</strong>
+        <div><button type="button" class="ml-2 mb-1 close" onclick="closeAlert()">x</button></div>
+      </div>
+      <div class="alert-body">
+        Board and notes saved successfully
+      </div>
+    </div>
+    <div class="buttons">
+      <svg class="bottom-icon" id="create-card" width="20" height="20">
+        <use xlink:href="teenyicons/teenyicons-outline-sprite.svg#outline--text-document" />
+      </svg>
+      <svg class="bottom-icon" id="create-sticky" width="20" height="20">
+        <use xlink:href="teenyicons/teenyicons-outline-sprite.svg#outline--note" />
+      </svg>
+      <div id="save-button">
+        <svg class="bottom-icon" id="save-sticky" width="20" height="20">
+          <use xlink:href="teenyicons/teenyicons-outline-sprite.svg#outline--save" />
+        </svg>
+      </div>
+      <!-- <svg viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg" width="15" height="15"><path d="M4.5 14.5v-3a1 1 0 011-1h4a1 1 0 011 1v3m3 0h-12a1 1 0 01-1-1v-12a1 1 0 011-1h8.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V13.5a1 1 0 01-1 1z" stroke="currentColor"></path></svg> -->
+    </div>
+    <div class="stickers">
+      <div class="sticker" id="sticker-red"></div>
+      <div class="sticker" id="sticker-blue"></div>
+      <div class="sticker" id="sticker-yellow"></div>
+      <div class="sticker" id="sticker-green"></div>
+      <br />
+      <div class="sticker" id="sticker-pink"></div>
+      <div class="sticker" id="sticker-lightblue"></div>
+      <div class="sticker" id="sticker-orange"></div>
+      <div class="sticker" id="sticker-purple"></div>
+      <br />
+      <div class="sticker" id="nosticker"></div>
+    </div>
+    <div class="names">
+      <p>connected:</p>
+      <input id="yourname-input" /><span class="you-text">(you)</span>
+      <ul id="names-ul"></ul>
+    </div>
+  </div>
   <script type="text/javascript">
-    
-    //Retrieve and append board name on load.
-    window.onload = localStorage.getItem("boardName");
-    //window.onload = localStorage.getItem("boardId");
-    console.log(localStorage.getItem("boardId"));
-    //Replace file name with board name.
-    window.history.replaceState(
-      null,
-      null,
-      localStorage.getItem("boardName")
-    );
-    document.getElementById("board-title").innerHTML = localStorage.getItem("boardName");
-   
-    window.onload = function (){
-      document.getElementById('confirmation-prompt').style.display = 'none';
-    }
+    var _gaq = _gaq || [];
+    _gaq.push(["_setAccount", "UA-2069672-4"]);
+    _gaq.push(["_trackPageview"]);
+    (function () {
+      var ga = document.createElement("script");
+      ga.type = "text/javascript";
+      ga.async = true;
+      ga.src =
+        ("https:" == document.location.protocol
+          ? "https://ssl"
+          : "http://www") + ".google-analytics.com/ga.js";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(ga, s);
+    })();
   </script>
+</body>
+<!-- SCRIPTS -->
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"
+  integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous">
+  </script>
+<script>
+  $(document).ready(function () {
+    $(".passcode-ui").hide()
+    closeAlert();
+  });
+
+
+</script>
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"
+  integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
+  integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
+<!-- External Scripts -->
+<script src="lib/jquery.ui.touch-punch.min.js"></script>
+<!--<script src="lib/jquery.jeditable.js"></script>-->
+<script src="lib/jquery.blockUI.js"></script>
+<script src="lib/jquery-contenteditable.min.js"></script>
+<!-- test -->
+<!-- <script src="lib/signature_pad.js"></script>
+    <script src="lib/writingpad.js"></script> -->
+<!-- Socket.IO -->
+<!--<script src="socketio/socket.io.js"></script>-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.1/socket.io.min.js"></script>
+<!-- ** My Script ** -->
+<script src="script.js"></script>
+<script src="environment.js"></script>
+<script src="still-frontend.js"></script>
+
 </html>

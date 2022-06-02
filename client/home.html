@@ -1,25 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <!-- SCRIPTS -->
-    <script src="environment.js"></script>
-    <script src="still-frontend.js"></script>
-    <script src="script.js"></script>
 
-    <link rel="stylesheet" type="text/css" href="css/style.css" />
-    <!-- FONTS -->
-    <link
-      href="http://fonts.googleapis.com/css?family=Rock+Salt"
-      rel="stylesheet"
-      type="text/css"
-    />
-    <link
-      href="http://fonts.googleapis.com/css?family=Covered+By+Your+Grace"
-      rel="stylesheet"
-      type="text/css"
-    />
-    <title>scrumblr</title>
-  </head>
+<head>
+  <!-- SCRIPTS -->
+  <script src="environment.js"></script>
+  <script defer src="still-frontend.js"></script>
+  <script src="script.js"></script>
+  <script
+  src="https://code.jquery.com/jquery-3.6.0.min.js"
+  integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+  crossorigin="anonymous"></script>
+  <script>
+    $(function() {
+      $(".passcode-ui").load("passcode-ui.html")
+    });
+  </script>
+
+  <link rel="stylesheet" type="text/css" href="css/style.css" />
+  <!-- FONTS -->
+  <link href="http://fonts.googleapis.com/css?family=Rock+Salt" rel="stylesheet" type="text/css" />
+  <link href="http://fonts.googleapis.com/css?family=Covered+By+Your+Grace" rel="stylesheet" type="text/css" />
+  <title>scrumblr</title>
+</head>
+
 </html>
 
 <body>
@@ -31,12 +34,19 @@
         <tr>
           <td>
             <h1 class="home">scrumblr.</h1>
-            <form class="home" onsubmit="return go();">
-              <label>name your new board:</label><br>
-              <input class="text" type="text" name="name"><a id="go" onclick="return go();">&nbsp;go.</a>
-            </form><br><br>
+                <form name="createBoard" class="home create-board-form">
+                  <div class="board-name">
+                    <label for="boardname">name your board:</label><br>
+                    <input class="text" autofocus required minlength="1" type="text" name="boardname"
+                      placeholder="board name">
+                    <button id="go" type="submit">&nbsp;go.</button>
+                  </div>
+                  <div class="passcode-ui"></div>
+                </form>
+            </div>
             <p class="home">example board:</p>
-            <p class="home"><a href="http://undefined/demo">undefined/demo</a></p><br><br><br>
+            <p class="home"><a href="https://www.scrumblr.roarcoder.dev/board?boardname=testboard">board/testboard</a>
+            </p><br><br><br>
             <p class="home small">sourcecode at <a href="https://github.com/aliasaria/scrumblr">github</a></p>
           </td>
         </tr>
@@ -49,9 +59,9 @@
       <div><button type="button" class="ml-2 mb-1 close" onclick="closeAlert()">x</button></div>
     </div>
     <div class="alert-body">
-      Board already exists, please enter another board name
+      Board already exists or incorrect passcode
     </div>
-</div>
+  </div>
   <div class="stickers">
     <div class="sticker" id="sticker-red"></div>
     <div class="sticker" id="sticker-blue"></div>
@@ -69,16 +79,17 @@
   <!--display # of active users here-->
   <div class="active-connections">connections: undefined</div>
   <!--<div style="width: 980px; height: 450px; border: solid 2px; opacity:.1; margin-top: 100px"> this will be the backlog that only appears on drag or perhaps not at all</div>-->
-  <script type="text/javascript">	  
+  <script type="text/javascript">
     var _gaq = _gaq || [];
     _gaq.push(['_setAccount', 'UA-2069672-4']);
     _gaq.push(['_trackPageview']);
-    (function () { var ga = document.createElement('script');
+    (function () {
+      var ga = document.createElement('script');
       ga.type = 'text/javascript';
       ga.async = true;
       ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
       var s = document.getElementsByTagName('script')[0];
       s.parentNode.insertBefore(ga, s);
     })();  
-    </script>
+  </script>
 </body>
