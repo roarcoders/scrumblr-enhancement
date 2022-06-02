@@ -470,7 +470,7 @@ function addUpdateBoardNotes({id, text, position, colour}) {
     }
     boardNotesMap.set(note.id, note)
     boardNotesMap.forEach(function(value, key) {
-        console.log(key+ ":", value.data);
+        console.log(key+ ":", value.data, value.status);
     });
 }
 
@@ -613,6 +613,8 @@ function createColumn(name) {
     var data = columns;
 
     sendAction(action, data);
+    const message = {action: 'initColumns', data: data}
+    dispatchWebSocketMessage({action: 'default', message});
 }
 
 function deleteColumn() {
@@ -626,6 +628,8 @@ function deleteColumn() {
     var data = columns;
 
     sendAction(action, data);
+    const message = {action: action, data: data}
+    dispatchWebSocketMessage({action: 'default', message});
 }
 
 function updateColumns(c) {
@@ -636,6 +640,8 @@ function updateColumns(c) {
     var data = columns;
 
     sendAction(action, data);
+    const message = {action: action, data: data}
+    dispatchWebSocketMessage({action: 'default', message});
 }
 
 function deleteColumns(next) {
