@@ -1,14 +1,16 @@
 let sessionBoardId;
 // let url = 'http://localhost:3000/board/'
-let url = 'https://xc00lhup6e.execute-api.ap-southeast-2.amazonaws.com/prod/board/';
+let url = 'https://qdeckt5m9l.execute-api.ap-southeast-2.amazonaws.com/prod/board/';
 let boardNames;
-const webSocketURL = 'wss://ej6unz28ji.execute-api.ap-southeast-2.amazonaws.com/prod';
+const webSocketURL = 'wss://2c4155kkaf.execute-api.ap-southeast-2.amazonaws.com/prod';
 /**@type {WebSocket} */
 let webSocket;
 const PROD_HOST = 'www.scrumblr.roarcoder.dev';
 const isProduction = PROD_HOST === window.location.hostname;
 
 onLoad();
+
+const setAlertMsg = (msg) => document.querySelector('.alert-body').textContent = msg
 
 async function getBoard() {
   return sessionBoardId;
@@ -44,10 +46,6 @@ async function createNewBoard(boardName, passCode) {
 
 
   //Delaying code run for 500ms so that postBoardName is able to penetrate the request
-
-  //Uncomment or comment when testing
-  // console.log(getBoardByName(value));
-  console.log(sessionBoardId);
 }
 
 async function getBoardName(boardId) {
@@ -133,7 +131,6 @@ async function validateCredentials(boardName,passcode) {
     }),
   })
   .then((response) => response.json())
-  console.log(response);
 
   return response;
 
@@ -173,7 +170,10 @@ async function getBoardByName(boardName) {
   })
     .then((response) => response.json())
     .then((json) => json);
-  console.log(currentBoard);
+  localStorage.setItem('boardObject', JSON.stringify(currentBoard));
+
+  columnNames = currentBoard.Items[0].ColumnNames;
+  columnNames.map(name => createColumn(name));
   return currentBoard;
 }
 
@@ -238,7 +238,6 @@ async function getNote(boardId, noteId) {
       return text ? JSON.parse(text) : {};
     });
   });
-  console.log(note);
 }
 
 async function patchNote(boardId, noteId, newNote) {
@@ -493,27 +492,23 @@ function getBoardNotesArray () {
   return [...boardNotesMap.values()];
 }
 
+
 /**
  * 
- * @param {string} boardId 
- * @param {BoardNote[]} notes 
- * @param {string} passcode 
- * @param {string} boardName 
+ * @param {string[]} boardColumnsArray 
  * @returns {number} - returns the status or undefined
  */
-async function postNotes(boardId, notes, passcode, boardName) {
+async function postBoardColumns(boardColumnsArray, boardId) {
   try {
-    const res = await fetch(url + boardId + '/note/', {
-      method: 'POST',
+    const res = await fetch(url + boardId + '/columns/', {
+      method: 'PATCH',
       mode: 'cors',
       headers: {
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*',
       },
       body: JSON.stringify({
-        Notes: notes,
-        Passcode: passcode,
-        BoardName: boardName,
+        Columns: boardColumnsArray,
       }),
     });
     if (res.ok) {
@@ -523,6 +518,14 @@ async function postNotes(boardId, notes, passcode, boardName) {
   } catch (error) {
     console.error(error)
   }
+}
+
+/**
+ * @returns {boolean} true if arrays are the equal
+ */
+function areArraysEqual(columns, prevColumns) {
+  return columns.length === prevColumns.length
+  && columns.every((colName, index) => colName === prevColumns[index])
 }
 
 /**
@@ -548,18 +551,25 @@ async function postPatchNotesOnSave(passcode) {
   }
   }
 
+  if(!areArraysEqual(columns, prevColumns)) {
+    // send the post request with the columns
+    const res = await postBoardColumns(columns, boardId);
+    if(res !== 200) {
+      setAlertMsg('Failed To Save Board Columns')
+      return openAlert();
+    }
+    prevColumns = columns;
+  }
+
   for await (const {data, id, status} of notes) {
-    console.log(JSON.stringify({data, id, status}, null, 2))
     const failureMsg = () => console.error(`fail to insert note ${id}: ${note}`)
     switch(status) {
       case 'Inserted': {
-        console.log('patch')
         const res = await patchNote(boardId, id, data).catch(err => console.error(err))
         if(!res === 200) failureMsg()
         break;
       }
       case 'Not Inserted': {
-        console.log('POST')
         const res = await postNote(boardId, id, data).catch(err => console.error(err))
         
         if(!res === 200) {
@@ -636,17 +646,15 @@ function handlePasscodeForm(form) {
 function addEventListenersToBoardPage () {
   const saveNoteBTN = document.getElementById('save-button');
   $(".passcode-ui").load("passcode-ui.html");
-  saveNoteBTN.addEventListener('click', () => 
-  $(".passcode-ui, form[name='passcode-form']").show()
-  
-  );
+  saveNoteBTN.addEventListener('click', () => $(".passcode-ui, form[name='passcode-form']").show());
+
   document.querySelector("form[name='passcode-form']").addEventListener('submit', async (event) => {
     event.preventDefault();
     const [_, passcode] = handlePasscodeForm(event.target)
 
     const isPasscodeValid = await validateCredentials(getLocalStorage('boardName'), passcode);
     
-    const setAlertMsg = (msg) => document.querySelector('.alert-body').textContent = msg
+    
     
     if(!isPasscodeValid) {
       setAlertMsg('Invalid Password')
@@ -661,6 +669,32 @@ function addEventListenersToBoardPage () {
   } )
 }
 
+function autoTabPasscodeForm() {
+    // for the passcode / password form section
+    document.querySelector('form .passcode-ui').addEventListener('keyup', (event) => {
+      const inputsPasscode = [...document.querySelectorAll('form .passcode-ui input')];
+      const inputElement = event.target;
+      const inputElementName = inputElement.name;
+  
+      if(event.type === 'keyup' && inputElement instanceof HTMLInputElement) {
+  
+        const indexEl = inputsPasscode.findIndex(inputEl => inputEl.name === inputElementName)
+        if(indexEl === -1) return;
+        
+        const nextInput = inputsPasscode[indexEl + 1];
+        const prevInput = inputsPasscode[indexEl - 1]
+  
+    
+        // move to next pin code input or go back to previous pin code input
+        if(inputElement.value.length === parseInt(inputElement.getAttribute('maxlength')) && nextInput) {
+          nextInput.focus();
+        } else if(!inputElement.value.length && prevInput) {
+          prevInput.focus();
+        }
+      }
+    })
+}
+
 function addEventListenerToHomePage () {
   document.querySelector('form[name=createBoard]').addEventListener('submit', (event) => {
     event.preventDefault();
@@ -668,29 +702,7 @@ function addEventListenerToHomePage () {
 
     createNewBoard(...handlePasscodeForm(event.target))
   });
-  // for the passcode / password form section
-  const inputs = [...document.querySelectorAll('form .passcode-ui input')];
-  document.querySelector('form .passcode-ui').addEventListener('keyup', (event) => {
-    const element = event.target;
-    const name = element.name;
-
-    if(event.type === 'keyup' && element instanceof HTMLInputElement) {
-
-      const indexEl = inputs.findIndex(element => element.name === name)
-      if(indexEl === -1) return;
-      
-      const nextInput = inputs[indexEl + 1];
-      const prevInput = inputs[indexEl - 1]
-
-
-      // move to next pin code input or go back to previous pin code input
-      if(element.value.length === parseInt(element.getAttribute('maxlength'), 10) && nextInput) {
-        nextInput.focus();
-      } else if(!element.value.length && prevInput) {
-        prevInput.focus();
-      }
-    }
-  })
+  autoTabPasscodeForm()
 }
 
 /**
@@ -725,6 +737,8 @@ async function loadBoardPage() {
   addBoardQueryStringToURL(boardName);
 
   const boardData = await getBoardByName(boardName);
+  sessionStorage.setItem('boardData',JSON.stringify(boardData));
+ 
   if (boardData.Items.length === 0) return redirectToHome();
 
   const boardId = boardData.Items[0].BoardId;
@@ -808,7 +822,3 @@ async function onLoad() {
   // TODO
   // document.getElementById('confirmation-prompt').style.display = 'none';
 }
-
-// 1. compare passcode from the backend
-// 2. backend passcode validation function return true of false
-// 3. based on the result, we show the message

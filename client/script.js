@@ -1,85 +1,25 @@
 var cards = {};
 var totalcolumns = 0;
 var columns = [];
+let prevColumns = [];
 var currentTheme = "bigcards";
 var boardInitialized = false;
 var keyTrap = null;
 /**@type Map<(id: string), BoardNote> */
 const boardNotesMap = new Map();
 const noteStatus = {NI:"Not Inserted", I:"Inserted"}
-
+const boardData = sessionStorage.getItem('boardData');
 var baseurl = location.pathname.substring(0, location.pathname.lastIndexOf('/'));
-/*------removing socketIO references----------(Jason)
-//var socket = io();
-// We move socket.io from it's default URL (/socket.io) to (/socketio) because during
-// the upgrade to new socket.io, old clients on production server were hitting old
-// URL and crashing the server.
-var socket = io({
-    path: '/socketio'
-});
-*/
+
 //an action has happened, send it to the
 //server
 async function sendAction(a, d) {
-    // console.log('--> ' + a);
-    // console.log('Data -->' + JSON.stringify(d.value));
-    
-    
 
     var message = {
         action: a,
         data: d
     };
-
-  //  socket.send(message); ------removing socketIO references----------(Jason)
 }
-/*------removing socketIO references----------
-socket.on('connect', function() {
-    //console.log('successful socket.io connect');
-
-    //let the final part of the path be the room name
-    var room = location.pathname.substring(location.pathname.lastIndexOf('/'));
-
-    //imediately join the room which will trigger the initializations
-    sendAction('joinRoom', room);
-});
-
-socket.on('disconnect', function() {
-    blockUI("Server disconnected. Refresh page to try and reconnect...");
-    //$('.blockOverlay').click($.unblockUI);
-});
-
-socket.on('message', function(data) {
-    getMessage(data);
-});
-
-function unblockUI() {
-    $('.board-outline').trigger('initboard');
-    $.unblockUI({fadeOut: 50});
-}
-
-function blockUI(message) {
-    message = message || 'Waiting...';
-
-    $.blockUI({
-        message: message,
-
-        css: {
-            border: 'none',
-            padding: '15px',
-            backgroundColor: '#000',
-            '-webkit-border-radius': '10px',
-            '-moz-border-radius': '10px',
-            opacity: 0.5,
-            color: '#fff',
-            fontSize: '20px'
-        },
-
-        fadeOut: 0,
-        fadeIn: 10
-    });
-}
-------removing socketIO references----------(Jason)*/
 
 /**
  * @typedef {{id: string}} CardId
@@ -123,15 +63,6 @@ function getMessage(m) {
     var action = message.action;
     var data = message.data;
 
-    //console.log('<-- ' + action);
-    //console.log(message);
-    // let note = {
-    //     id:data.id,
-    //     text:data.text
-    // }
-    // textForNotes.append(note);
-    // console.log("array -> " + textForNotes);
-
     switch (action) {
         case 'roomAccept':
             //okay we're accepted, then request initialization
@@ -152,7 +83,6 @@ function getMessage(m) {
             break;
 
         case 'createCard':
-            //console.log(data);
             drawNewCard(data.id, data.text, data.x, data.y, data.rot, data.colour, data.type, null,
                 null);
             
@@ -227,38 +157,6 @@ function getMessage(m) {
 
     
 }
-
-/**@toreylittlefield I think this is not used anymore */
-// async function updateArray()
-// { 
-    
-//     let sessionBoardId = localStorage.getItem("boardId");
-
-//     boardNotesMap.forEach(async function(value, key) {
-       
-//         let currentStatus=404;
-//         console.log(value.status);
-//         switch (value.status) {
-//             case "Not Inserted":
-//                 currentStatus = await postNote(sessionBoardId,key,value.data);
-//                 switch (currentStatus) {
-//                     case 200:
-//                         openAlert()
-//                         let note = {
-//                             id: key,
-//                             data: value.data,
-//                             status: noteStatus.I
-//                         }
-//                         boardNotesMap.set(key, note);  
-//                 }
-//             break;
-//             case "Inserted":
-//                 currentStatus = await patchNote(sessionBoardId,key,value.data);
-//             default:
-//         }
-//       });      
-
-// }
 
 async function requestDeleteNote(cardId) {
 
@@ -345,7 +243,6 @@ function drawNewCard(id, text, x, y, rot, colour, type, sticker, animationspeed)
         {
             //You're dragging a sticker on the card, not the card itself
             //so do not move the card
-            //console.log(event);
             if(event.offsetX > 20) console.log('delete!');
             return;
         }
@@ -487,7 +384,6 @@ async function onCardChange(id, text, c) {
 }
 
 function moveCard(card, position) {
-    console.log(card);
     card.animate({
         left: position.left + "px",
         top: position.top + "px"
@@ -557,7 +453,6 @@ async function createCard(id, text, x, y, rot, colour, type) {
  * @param {Colour} note.colour
  */
 function addUpdateBoardNotes({id, text, position, colour}) {
-    console.log(...arguments)
     let note = {};
     if(!boardNotesMap.has(id)) {
         /**@type BoardNote */
@@ -679,8 +574,6 @@ function drawNewColumn(columnName) {
 function onColumnChange(id, text) {
     var names = Array();
 
-    //console.log(id + " " + text );
-
     //Get the names of all the columns right from the DOM
     $('.col').each(function() {
 
@@ -712,7 +605,6 @@ function displayRemoveColumn() {
 
 function createColumn(name) {
     if (totalcolumns >= 8) return false;
-
     drawNewColumn(name);
     columns.push(name);
 
@@ -808,7 +700,6 @@ function setName(name) {
 
 function displayInitialUsers(users) {
     for (var i in users) {
-        //console.log(users);
         displayUserJoined(users[i].sid, users[i].user_name);
     }
 }
@@ -908,7 +799,6 @@ function adjustCard(offsets, doSync) {
                     top: parseInt(card.css('top').slice(0, -2))
                 }
             }; //use .css() instead of .position() because css' rotate
-            //console.log(data);
             if (!doSync) {
                 card.css('left', data.position.left);
                 card.css('top', data.position.top);
@@ -928,8 +818,6 @@ function adjustCard(offsets, doSync) {
 function adjustMarker(originalSize, newSize) {
     //remove any y positioning. Makes a harsh jump but works as a hack
     $("#marker,#eraser").css('top','');
-    // console.log( "markerleft: " + $('#marker').css('left') );
-    // console.log( "size: " + newSize.width);
      
     //if either has gone over the edge of the board, just bring it in
     if ( parseFloat($('#marker').css('left')) > newSize.width - 100)
@@ -977,7 +865,6 @@ $(function() {
         .click(function() {
             var rotation = Math.random() * 4 - 2; //add a bit of random rotation (+/- 2deg)
             uniqueID = Math.round(Math.random() * 99999999); //is this big enough to assure uniqueness?
-           console.log(uniqueID);
             createCard(
                 'card' + uniqueID,
                 '',
@@ -1160,7 +1047,6 @@ $(function() {
         autoselect: false, //select content automatically when editing starts
         save: function(content) {
             //here you can save content to your MVC framework's model or send directly to server...
-            console.log(content);
 
             var action = "editText";
 
@@ -1197,3 +1083,20 @@ function openAlert() {
     const fadeOut = animations.find(ani => ani.animationName === 'fade-out')
     fadeOut.onfinish = () => closeAlert();
 }
+
+async function getBoardByName(boardName) {
+    // alert("this was called");
+  
+    const currentBoard = await fetch(url + boardName, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+      },
+    })
+      .then((response) => response.json())
+      .then((json) => json);
+
+    return currentBoard;
+  }
+
