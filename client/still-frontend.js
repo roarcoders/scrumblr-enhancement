@@ -477,7 +477,7 @@ function initCardsInScriptJS(boardData) {
   const boardNotes = getBoardNotesArray();
 
   const cardsArray = boardNotes.map((
-    { id, data: { colour, position: { left, top }, text, status}}
+    { id, data: { colour, position: { left, top }, text, status }}
     ) => formAValidNote({ id, text, colour, x: left, y: top, status }));
 
   getMessage({ action: 'initCards', data: cardsArray });
@@ -697,7 +697,7 @@ function autoTabPasscodeForm() {
 
 function addEventListenerToHomePage () {
   document.querySelector('form[name=createBoard]').addEventListener('submit', (event) => {
-    showProgressBar();
+    showProgressBar()
     event.preventDefault();
 
 
