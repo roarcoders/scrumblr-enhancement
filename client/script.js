@@ -282,6 +282,9 @@ function drawNewCard(id, text, x, y, rot, colour, type, sticker, animationspeed)
 
     var startPosition = $("#create-card").position();
 
+    const top = startPosition.top - card.height() * 0.5;
+    const left = startPosition.left - card.width() * 0.5;
+
     card.css('top', startPosition.top - card.height() * 0.5);
     card.css('left', startPosition.left - card.width() * 0.5);
 
@@ -368,6 +371,9 @@ function drawNewCard(id, text, x, y, rot, colour, type, sticker, animationspeed)
     //add applicable sticker
     if (sticker)
         addSticker(id, sticker);
+
+    //update the board notes map
+    addUpdateBoardNotes({id, colour, position: { left, top }, text});
 }
 
 
@@ -613,8 +619,8 @@ function createColumn(name) {
     var data = columns;
 
     sendAction(action, data);
-    const message = {action: 'initColumns', data: data}
-    dispatchWebSocketMessage({action: 'default', message});
+    const message = {action: action, data: data};
+    dispatchWebSocketMessage({action:'default', message});
 }
 
 function deleteColumn() {
@@ -628,8 +634,8 @@ function deleteColumn() {
     var data = columns;
 
     sendAction(action, data);
-    const message = {action: action, data: data}
-    dispatchWebSocketMessage({action: 'default', message});
+    const message = {action: action, data: data};
+    dispatchWebSocketMessage({action:'default', message});
 }
 
 function updateColumns(c) {
@@ -640,8 +646,8 @@ function updateColumns(c) {
     var data = columns;
 
     sendAction(action, data);
-    const message = {action: action, data: data}
-    dispatchWebSocketMessage({action: 'default', message});
+    const message = {action: action, data: data};
+    dispatchWebSocketMessage({action:'default', message});
 }
 
 function deleteColumns(next) {
@@ -898,7 +904,7 @@ $(function() {
         } else if (currentTheme == "smallcards") {
             changeThemeTo('bigcards');
             newBoardSize.height = oldHeight * 1.5;
-            newBoardSize.width = oldWidth * 1.5; 
+            newBoardSize.width = oldWidth * 1.5;
         }
         /*else if (currentTheme == "nocards")
 		{
@@ -1105,4 +1111,3 @@ async function getBoardByName(boardName) {
 
     return currentBoard;
   }
-
