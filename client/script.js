@@ -254,6 +254,8 @@ function drawNewCard(id, text, x, y, rot, colour, type, sticker, animationspeed)
         };
 
         sendAction('moveCard', data);
+        const message = {action: 'moveCard', data: data}
+        dispatchWebSocketMessage({action:'default', message})
     });
 
     card.children(".droppable").droppable({
@@ -394,6 +396,8 @@ function moveCard(card, position) {
         left: position.left + "px",
         top: position.top + "px"
     }, 500);
+    const message = {action: 'moveCard', data: position};
+    dispatchWebSocketMessage({action:'default', message});
 }
 
 function addSticker(cardId, stickerId) {
