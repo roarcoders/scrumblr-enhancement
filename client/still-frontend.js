@@ -171,8 +171,8 @@ async function getBoardByName(boardName) {
     .then((json) => json);
   localStorage.setItem('boardObject', JSON.stringify(currentBoard));
 
-  columnNames = currentBoard.Items[0].ColumnNames;
-  columnNames.map(name => createColumn(name));
+  // columnNames = currentBoard.Items[0].ColumnNames; uncomment this when fixing column functionality
+  // columnNames.map(name => createColumn(name));
   return currentBoard;
 }
 
