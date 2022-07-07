@@ -1,10 +1,10 @@
 let sessionBoardId;
 // let url = 'http://localhost:3000/board/'
-let url = 'https://qdeckt5m9l.execute-api.ap-southeast-2.amazonaws.com/prod/board/';
+let url = 'https://les0lv6ba2.execute-api.ap-southeast-2.amazonaws.com/prod/board/';
 let boardNames;
-const webSocketURL = 'wss://2c4155kkaf.execute-api.ap-southeast-2.amazonaws.com/prod';
+const webSocketURL = 'wss://tap2vtur12.execute-api.ap-southeast-2.amazonaws.com/prod';
 /**@type {WebSocket} */
-let webSocket;
+let webSocket = new WebSocket(`${webSocketURL}?boardId=${getLocalStorage('boardId')}`);
 const PROD_HOST = 'www.scrumblr.roarcoder.dev';
 const isProduction = PROD_HOST === window.location.hostname;
 
@@ -159,7 +159,6 @@ async function getBoards() {
  * @returns {Promise<BoardData>}
  */
 async function getBoardByName(boardName) {
-  // alert("this was called");
 
   const currentBoard = await fetch(url + boardName, {
     method: 'GET',
@@ -196,7 +195,7 @@ async function postNote(boardId, note_id, data) {
     },
     body: JSON.stringify({
       noteId: note_id || getUUID(),
-      singleNote: data,
+      singleNote: data.text,
     }),
   }).then(res => {
     return status = res.status;
@@ -316,7 +315,7 @@ async function patchBoardName(boardId, newName) {
  */
  function onConnect() {
   return new Promise((resolve, reject) => {
-    webSocket = new WebSocket(`${webSocketURL}?boardId=${getLocalStorage('boardId')}`);
+
     webSocket.onopen = (event) => {
       resolve('open');
     }
@@ -661,7 +660,7 @@ function addEventListenersToBoardPage () {
       return openAlert();
     }
     
-    setAlertMsg('Board and notes saved successfully')
+  setAlertMsg('Board and notes saved successfully')
 
     await postPatchNotesOnSave(passcode);
     openAlert();

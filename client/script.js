@@ -181,7 +181,7 @@ $(document).bind('keyup', function(event) {
 });
 
 function drawNewCard(id, text, x, y, rot, colour, type, sticker, animationspeed) {
-    
+
     //cards[id] = {id: id, text: text, x: x, y: y, rot: rot, colour: colour};
 
     var h = '';
@@ -475,7 +475,7 @@ function addUpdateBoardNotes({id, text, position, colour}) {
         note = {
             id:id,
             data: { text, position, colour },
-            status: 'Inserted'
+            status: 'Not Inserted'
         }
     }
     boardNotesMap.set(note.id, note)
@@ -1101,7 +1101,6 @@ function openAlert() {
 }
 
 async function getBoardByName(boardName) {
-    // alert("this was called");
   
     const currentBoard = await fetch(url + boardName, {
       method: 'GET',
