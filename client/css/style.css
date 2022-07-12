@@ -946,3 +946,18 @@ input {
 .bg-gray {
 	background-color: #c8c4bc;
 }
+
+#myProgress {
+    width: 50%;
+    background-color: grey;
+	margin: 0 auto;
+	position: relative;
+	bottom: 50%;
+	display: none;
+}
+  
+#myBar {
+    width: 1%;
+    height: 10px;
+    background-color: green;
+}
