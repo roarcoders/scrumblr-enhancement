@@ -375,7 +375,7 @@ function drawNewCard(id, text, x, y, rot, colour, type, sticker, animationspeed)
         addSticker(id, sticker);
 
     //update the board notes map
-    addUpdateBoardNotes({id, colour, position: { left, top }, text});
+    //addUpdateBoardNotes({id, colour, position: { left, top }, text});
 }
 
 
@@ -475,7 +475,7 @@ function addUpdateBoardNotes({id, text, position, colour}) {
         note = {
             id:id,
             data: { text, position, colour },
-            status: 'Not Inserted'
+            status: 'Inserted'
         }
     }
     boardNotesMap.set(note.id, note)
