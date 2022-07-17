@@ -666,6 +666,7 @@ function addEventListenersToBoardPage () {
     openAlert();
     $(".passcode-ui, form[name='passcode-form']").hide()
   } )
+  autoTabPasscodeForm();
 }
 
 function autoTabPasscodeForm() {
