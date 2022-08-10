@@ -1,8 +1,8 @@
 let sessionBoardId;
 // let url = 'http://localhost:3000/board/'
-let url = 'https://les0lv6ba2.execute-api.ap-southeast-2.amazonaws.com/prod/board/';
+let url = 'https://cx609cfiw0.execute-api.ap-southeast-2.amazonaws.com/prod/board/';
 let boardNames;
-const webSocketURL = 'wss://tap2vtur12.execute-api.ap-southeast-2.amazonaws.com/prod';
+const webSocketURL = 'wss://pikkhitmn3.execute-api.ap-southeast-2.amazonaws.com/prod';
 /**@type {WebSocket} */
 let webSocket = new WebSocket(`${webSocketURL}?boardId=${getLocalStorage('boardId')}`);
 const PROD_HOST = 'www.scrumblr.roarcoder.dev';
@@ -170,9 +170,10 @@ async function getBoardByName(boardName) {
     .then((response) => response.json())
     .then((json) => json);
   localStorage.setItem('boardObject', JSON.stringify(currentBoard));
-
-  // columnNames = currentBoard.Items[0].ColumnNames; uncomment this when fixing column functionality
-  // columnNames.map(name => createColumn(name));
+  
+  if (currentBoard.Items[0].hasOwnProperty('ColumnNames')){
+      currentBoard.Items[0].ColumnNames.map(name => createColumn(name));
+  }
   return currentBoard;
 }
 
@@ -195,7 +196,7 @@ async function postNote(boardId, note_id, data) {
     },
     body: JSON.stringify({
       noteId: note_id || getUUID(),
-      singleNote: data.text,
+      singleNote: data,
     }),
   }).then(res => {
     return status = res.status;
@@ -659,8 +660,6 @@ function addEventListenersToBoardPage () {
       setAlertMsg('Invalid Password')
       return openAlert();
     }
-    
-  setAlertMsg('Board and notes saved successfully')
 
     await postPatchNotesOnSave(passcode);
     openAlert();
